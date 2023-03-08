@@ -27,11 +27,11 @@ const secondaryColor = params.get('secondary')?.split(',') || ['#37352f29', '#ff
 const bgColor = params.get('bg')?.split(',') || ['#ffffff', '#191919']
 const cssVars = {
   '--primary-color': primaryColor[0],
-  '--primary-color-dark': primaryColor[1],
+  '--primary-color-dark': primaryColor[1] || primaryColor[0],
   '--secondary-color': secondaryColor[0],
-  '--secondary-color-dark': secondaryColor[1],
+  '--secondary-color-dark': secondaryColor[1] || secondaryColor[0],
   '--bg-color': bgColor[0],
-  '--bg-color-dark': bgColor[1],
+  '--bg-color-dark': bgColor[1] || bgColor[0],
 }
 
 const { t } = useI18n(lang)
