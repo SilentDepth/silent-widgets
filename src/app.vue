@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { t } from './composables/use-i18n'
+import useI18n from './composables/use-i18n'
 
 const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
@@ -19,6 +19,10 @@ const nowWeekday = $computed(() => now.getDay())
 if (import.meta.env.PROD) {
   setInterval(() => now = new Date(), 60000)
 }
+
+const params = new URL(location.href).searchParams
+
+const { t } = useI18n(params.has('lang') ? params.get('lang')! : undefined)
 </script>
 
 <template lang="pug">

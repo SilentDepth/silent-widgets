@@ -4,20 +4,42 @@ import langs from '../assets/lang'
 
 const DEFAULT_LANG = 'en-US'
 
-let _lang = $ref(DEFAULT_LANG)
-export let lang = $computed({
+let _lang = $ref('')
+let lang = $computed({
   get: () => _lang,
-  set: value => _lang = value in langs ? value : _lang,
+  set: value => {
+    _lang = value in langs
+      ? value
+      : _lang
+        ? _lang
+        : navigator.language in langs
+          ? navigator.language
+          : DEFAULT_LANG
+  },
 })
 let langData = $ref<Record<string, string>>({})
-
-lang = navigator.language
 
 watch($$(_lang), async lang => {
   document.documentElement.setAttribute('lang', lang)
   langData = await langs[lang]()
-}, { immediate: true })
+})
 
-export function t (key: string): string {
+function t (key: string): string {
   return langData[key] || key
+}
+
+export default function useI18n (langInit?: string) {
+  if (langInit) {
+    lang = langInit
+  }
+  // if `lang` has not been initialized (which means no lang data is loaded),
+  // initialize it with the default resolver
+  else if (!lang) {
+    lang = ''
+  }
+
+  return {
+    lang,
+    t,
+  }
 }
