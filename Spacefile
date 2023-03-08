@@ -1,0 +1,8 @@
+v: 0
+app_name: "Year Progress"
+micros:
+  - name: "web"
+    src: "./"
+    engine: "vue"
+    public_routes:
+      - "/*"
