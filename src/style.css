@@ -4,8 +4,6 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgb(55 53 47);
-  --inactive-color: rgb(55 53 47 / 0.16);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -16,9 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --inactive-color: rgb(255 255 255 / 0.13);
-    color: rgb(255 255 255 / 0.81);
-    background-color: #191919;
+    color: #fff;
+    background-color: #000;
   }
 }
 

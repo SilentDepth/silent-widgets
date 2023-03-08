@@ -21,13 +21,29 @@ if (import.meta.env.PROD) {
 }
 
 const params = new URL(location.href).searchParams
+const lang = params.get('lang') || undefined
+const primaryColor = params.get('primary')?.split(',') || ['#37352f', '#ffffffcf']
+const secondaryColor = params.get('secondary')?.split(',') || ['#37352f29', '#ffffff21']
+const bgColor = params.get('bg')?.split(',') || ['#ffffff', '#191919']
+const cssVars = {
+  '--primary-color': primaryColor[0],
+  '--primary-color-dark': primaryColor[1],
+  '--secondary-color': secondaryColor[0],
+  '--secondary-color-dark': secondaryColor[1],
+  '--bg-color': bgColor[0],
+  '--bg-color-dark': bgColor[1],
+}
 
-const { t } = useI18n(params.has('lang') ? params.get('lang')! : undefined)
+const { t } = useI18n(lang)
 </script>
 
 <template lang="pug">
-div(class="h-screen overflow-hidden text-xs leading-none whitespace-nowrap flex items-center space-x-0.5")
-  div(v-for="m of months" :class="['h-1 relative', m.num < nowMonth ? 'bg-[currentColor]' : 'bg-[var(--inactive-color)]']" :style="{ flex: `${m.days} ${m.days} 0` }")
+div(class="h-screen overflow-hidden bg-[var(--bg-color)] dark:bg-[var(--bg-color-dark)] text-[var(--primary-color)] dark:text-[var(--primary-color-dark)] text-xs leading-none whitespace-nowrap flex items-center space-x-0.5" :style="cssVars")
+  div(
+    v-for="m of months"
+    :class="['h-1 relative', m.num < nowMonth ? 'bg-[currentColor]' : 'bg-[var(--secondary-color)] dark:bg-[var(--secondary-color-dark)]']"
+    :style="{ flex: `${m.days} ${m.days} 0` }"
+  )
     template(v-if="m.num === nowMonth")
       span(class="absolute left-0 bottom-full flex flex-col space-y-0.5 mb-1")
         span {{ nowYear }}
