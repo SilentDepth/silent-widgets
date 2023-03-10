@@ -29,6 +29,6 @@ export default defineConfig({
 })
 
 function resolveBuildInputs () {
-  const widgets = fs.readdirSync(resolve(__dirname, 'widgets'))
-  return Object.fromEntries(widgets.map(name => [name, resolve(__dirname, 'widgets', name, 'index.html')]))
+  const names = fs.readdirSync(resolve(__dirname, 'widgets'))
+  return Object.fromEntries(names.map(name => [name, resolve(__dirname, 'widgets', name, 'index.html')]))
 }
