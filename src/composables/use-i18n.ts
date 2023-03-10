@@ -46,8 +46,5 @@ export default function useI18n (langsInit?: Record<string, LangResolver>, langI
 
 function resolveDefaultLang () {
   const params = useSearchParams()
-  if (params.has('lang')) {
-    return params.get('lang')!
-  }
-  return navigator.language
+  return params.lang || navigator.language
 }

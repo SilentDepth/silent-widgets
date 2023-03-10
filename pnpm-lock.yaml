@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^18.15.0
+  '@unocss/transformer-directives': ^0.50.4
   '@vitejs/plugin-vue': ^4.0.0
   '@volar/vue-language-plugin-pug': ^1.2.0
   pug: ^3.0.2
@@ -16,6 +17,7 @@ dependencies:
 
 devDependencies:
   '@types/node': 18.15.0
+  '@unocss/transformer-directives': 0.50.4
   '@vitejs/plugin-vue': 4.0.0_vite@4.1.4+vue@3.2.47
   '@volar/vue-language-plugin-pug': 1.2.0
   pug: 3.0.2
