@@ -1,21 +1,17 @@
 import { watch } from 'vue'
 
-import langs from '../assets/lang'
+import useSearchParams from './use-search-params'
 
 const DEFAULT_LANG = 'en-US'
+
+type LangMessages = Record<string, string>
+type LangResolver = () => Promise<LangMessages>
+let langs = $ref<Record<string, LangResolver>>({})
 
 let _lang = $ref('')
 let lang = $computed({
   get: () => _lang,
-  set: value => {
-    _lang = value in langs
-      ? value
-      : _lang
-        ? _lang
-        : navigator.language in langs
-          ? navigator.language
-          : DEFAULT_LANG
-  },
+  set: value => _lang = value in langs ? value : (_lang || DEFAULT_LANG),
 })
 let langData = $ref<Record<string, string>>({})
 
@@ -28,18 +24,30 @@ function t (key: string): string {
   return langData[key] || key
 }
 
-export default function useI18n (langInit?: string) {
+export default function useI18n (langsInit?: Record<string, LangResolver>, langInit?: string) {
+  if (langsInit) {
+    langs = langsInit
+  }
+
   if (langInit) {
     lang = langInit
   }
   // if `lang` has not been initialized (which means no lang data is loaded),
-  // initialize it with the default resolver
+  // initialize it with the default language
   else if (!lang) {
-    lang = ''
+    lang = resolveDefaultLang()
   }
 
   return {
     lang,
     t,
   }
+}
+
+function resolveDefaultLang () {
+  const params = useSearchParams()
+  if (params.has('lang')) {
+    return params.get('lang')!
+  }
+  return navigator.language
 }

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import useI18n from './composables/use-i18n'
+import useI18n from '~/composables/use-i18n'
+import langs from './lang'
 
 const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
@@ -21,7 +22,6 @@ if (import.meta.env.PROD) {
 }
 
 const params = new URL(location.href).searchParams
-const lang = params.get('lang') || undefined
 const primaryColor = params.get('primary')?.split(',') || ['#37352f', '#ffffffcf']
 const secondaryColor = params.get('secondary')?.split(',') || ['#37352f29', '#ffffff21']
 const bgColor = params.get('bg')?.split(',') || ['#ffffff', '#191919']
@@ -34,7 +34,7 @@ const cssVars = {
   '--bg-color-dark': bgColor[1] || bgColor[0],
 }
 
-const { t } = useI18n(lang)
+const { t } = useI18n(langs)
 </script>
 
 <template lang="pug">

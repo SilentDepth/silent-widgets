@@ -1,3 +1,5 @@
+import { resolve } from 'node:path'
+import fs from 'node:fs'
 import { defineConfig } from 'vite'
 import unocss from 'unocss/vite'
 import presetUno from 'unocss/preset-uno'
@@ -10,4 +12,23 @@ export default defineConfig({
     }),
     vue({ reactivityTransform: true }),
   ],
+  resolve: {
+    alias: {
+      '~/': resolve(__dirname, 'src') + '/',
+    },
+  },
+  appType: 'mpa',
+  root: './widgets',
+  build: {
+    outDir: '../dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: resolveBuildInputs(),
+    },
+  },
 })
+
+function resolveBuildInputs () {
+  const widgets = fs.readdirSync(resolve(__dirname, 'widgets'))
+  return Object.fromEntries(widgets.map(name => [name, resolve(__dirname, 'widgets', name, 'index.html')]))
+}
