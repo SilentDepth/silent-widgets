@@ -1,0 +1,9 @@
+{
+  "diff.is_future": "还有",
+  "diff.is_today": "就是",
+  "diff.is_past": "已过去",
+  "diff.today": "今天",
+  "unit.day": "天",
+  "unit.day.plural": "天",
+  "hint.no_date": "未设定目标日期"
+}

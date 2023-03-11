@@ -1,0 +1,9 @@
+{
+  "diff.is_future": " in",
+  "diff.is_today": " is",
+  "diff.is_past": " has passed for",
+  "diff.today": "Today",
+  "unit.day": "Day",
+  "unit.day.plural": "Days",
+  "hint.no_date": "Target date not set"
+}
