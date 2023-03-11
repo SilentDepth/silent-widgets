@@ -2,6 +2,25 @@
 import useI18n from '~/composables/use-i18n'
 import langs from './lang'
 
+const { t } = useI18n(langs)
+
+const props = defineProps({
+  primary: {
+    type: String,
+    default: '#37352f,#ffffffcf',
+  },
+  secondary: {
+    type: String,
+    default: '#37352f29,#ffffff21',
+  },
+  bg: {
+    type: String,
+    default: '#ffffff,#191919',
+  },
+})
+
+// Date
+
 const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 let now = $ref(import.meta.env.DEV ? new Date(2023, 2, 20) : new Date())
@@ -21,10 +40,11 @@ if (import.meta.env.PROD) {
   setInterval(() => now = new Date(), 60000)
 }
 
-const params = new URL(location.href).searchParams
-const primaryColor = params.get('primary')?.split(',') || ['#37352f', '#ffffffcf']
-const secondaryColor = params.get('secondary')?.split(',') || ['#37352f29', '#ffffff21']
-const bgColor = params.get('bg')?.split(',') || ['#ffffff', '#191919']
+// Colors
+
+const primaryColor = props.primary.split(',')
+const secondaryColor = props.secondary.split(',')
+const bgColor = props.bg.split(',')
 const cssVars = {
   '--primary-color': primaryColor[0],
   '--primary-color-dark': primaryColor[1] || primaryColor[0],
@@ -33,8 +53,6 @@ const cssVars = {
   '--bg-color': bgColor[0],
   '--bg-color-dark': bgColor[1] || bgColor[0],
 }
-
-const { t } = useI18n(langs)
 </script>
 
 <template lang="pug">

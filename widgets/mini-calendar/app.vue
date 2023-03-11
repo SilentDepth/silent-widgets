@@ -1,12 +1,24 @@
 <script lang="ts" setup>
-import useSearchParams from '~/composables/use-search-params'
-
-const params = useSearchParams({
-  primary: '#37352f,#ffffffcf',
-  secondary: '#37352f6b,#ffffff47',
-  bg: '#ffffff,#191919',
-  weekstart: '0',
+const props = defineProps({
+  primary: {
+    type: String,
+    default: '#37352f,#ffffffcf',
+  },
+  secondary: {
+    type: String,
+    default: '#37352f6b,#ffffff47',
+  },
+  bg: {
+    type: String,
+    default: '#ffffff,#191919',
+  },
+  weekstart: {
+    type: String,
+    default: '0',
+  },
 })
+
+// Date
 
 let now = $ref(import.meta.env.PROD ? new Date() : new Date())
 const nowDate = $computed(() => now.getDate())
@@ -25,9 +37,11 @@ if (import.meta.env.PROD) {
   setInterval(() => now = new Date(), 60000)
 }
 
-const primaryColor = params.primary.split(',')
-const secondaryColor = params.secondary.split(',')
-const bgColor = params.bg.split(',')
+// Colors
+
+const primaryColor = props.primary.split(',')
+const secondaryColor = props.secondary.split(',')
+const bgColor = props.bg.split(',')
 const cssVars = {
   '--primary-color': primaryColor[0],
   '--primary-color-dark': primaryColor[1] || primaryColor[0],
@@ -43,7 +57,7 @@ div.widget(class="h-screen overflow-hidden0 bg-[var(--bg-color)] dark:bg-[var(--
   div.cell(
     v-for="d of dates"
     :class="['rounded-full', d.today ? 'today box-content grid place-content-center' : '', d.day === 0 || d.day === 6 ? 'bg-[var(--secondary-color)] dark:bg-[var(--secondary-color-dark)]' : 'bg-[var(--primary-color)] dark:bg-[var(--primary-color-dark)]']"
-    :style="{ gridColumnStart: d.date === 1 ? (d.day - Number(params.weekstart) + 7) % 7 + 1 : null }"
+    :style="{ gridColumnStart: d.date === 1 ? (d.day - Number(props.weekstart) + 7) % 7 + 1 : null }"
   )
     span(v-if="d.today" class="text-[var(--bg-color)] dark:text-[var(--bg-color-dark)]") {{ d.date }}
 </template>

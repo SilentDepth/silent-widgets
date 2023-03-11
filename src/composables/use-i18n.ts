@@ -1,7 +1,5 @@
 import { watch } from 'vue'
 
-import useSearchParams from './use-search-params'
-
 const DEFAULT_LANG = 'en-US'
 
 type LangMessages = Record<string, string>
@@ -45,6 +43,6 @@ export default function useI18n (langsInit?: Record<string, LangResolver>, langI
 }
 
 function resolveDefaultLang () {
-  const params = useSearchParams()
-  return params.lang || navigator.language
+  const params = new URL(location.href).searchParams
+  return params.get('lang') || navigator.language
 }
