@@ -29,12 +29,30 @@ const props = defineProps({
 
 // Date
 
-const date = $computed(() => props.date ? new Date(props.date) : null)
+const ERR_NO_DATE = Symbol()
+const ERR_INVALID_DATE = Symbol()
+
+const date = $computed(() => {
+  if (!props.date) return ERR_NO_DATE
+  const date = new Date(props.date)
+  return Number.isNaN(date.getTime()) ? ERR_INVALID_DATE : date
+})
+const error = $computed(() => {
+  switch (date) {
+    case ERR_NO_DATE:
+      return t('error.no_date')
+    case ERR_INVALID_DATE:
+      return t('error.invalid_date')
+    default:
+      return null
+  }
+})
 
 let now = $ref(new Date())
 const diff = $computed(() => {
+  if (typeof date === 'symbol') return null
   const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  return date ? Math.round((date.getTime() - startOfNow.getTime()) / 864e5) : null
+  return Math.round((date.getTime() - startOfNow.getTime()) / 864e5)
 })
 const diffValue = $computed(() => diff == null ? '' : diff === 0 ? t('diff.today') : Math.abs(diff))
 const diffLabel = $computed(() => {
@@ -44,6 +62,10 @@ const diffLabel = $computed(() => {
   if (diff < 0) return t('diff.is_past')
 })
 const unit = $computed(() => diff === 1 ? t('unit.day') : t('unit.day.plural'))
+
+if (import.meta.env.PROD) {
+  setInterval(() => now = new Date(), 6e4)
+}
 
 // Colors
 
@@ -60,14 +82,14 @@ const bgColorDark = _bgColors[1] || _bgColors[0]
 
 <template lang="pug">
 div.widget(class="h-screen overflow-hidden grid place-content-center place-items-center")
-  template(v-if="date")
+  div(v-if="error") {{ error }}
+  template(v-else)
     div(v-if="event" class="mb-1")
       span.event(class="font-medium") {{ event }}
       span.diff {{ diffLabel }}
     div(class="relative")
       span.value(class="leading-none text-4xl font-medium") {{ diffValue }}
       span.unit(v-if="diff" class="absolute bottom-0 left-full mb-1 ml-1 block leading-none px-1 py-0.5 text-sm font-medium") {{ unit }}
-  div(v-else) {{ t('hint.no_date') }}
 </template>
 
 <style scoped>

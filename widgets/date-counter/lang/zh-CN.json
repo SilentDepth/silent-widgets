@@ -5,5 +5,6 @@
   "diff.today": "今天",
   "unit.day": "天",
   "unit.day.plural": "天",
-  "hint.no_date": "未设定目标日期"
+  "error.no_date": "未设定目标日期",
+  "error.invalid_date": "目标日期无效"
 }
