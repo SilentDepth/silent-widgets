@@ -50,15 +50,15 @@ div.widget(class="h-screen overflow-hidden grid place-content-center" :style="cs
 
 <style scoped>
 .widget {
-  --sun-radius: 10vmin;
-  --orbit-radius: calc(100vmin - 20px - var(--sun-radius) / 2);
+  --sun-size: 10vmin;
+  --orbit-size: calc(100vmin - 20px - var(--sun-size));
 
   background: var(--bg-color);
 }
 
 .orbit {
-  width: var(--orbit-radius);
-  height: var(--orbit-radius);
+  width: var(--orbit-size);
+  height: var(--orbit-size);
 }
 
 .day {
@@ -72,8 +72,8 @@ div.widget(class="h-screen overflow-hidden grid place-content-center" :style="cs
 }
 
 .sun {
-  width: var(--sun-radius);
-  height: var(--sun-radius);
+  width: var(--sun-size);
+  height: var(--sun-size);
   background: var(--sun-color);
   box-shadow: 0 0 10px var(--sun-color);
 }
