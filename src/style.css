@@ -1,4 +1,11 @@
 :root {
+  --bg-color: #ffffff;
+  --bg-color-dark: #191919;
+  --primary-color: #37352f;
+  --primary-color-dark: #ffffffcf;
+  --secondary-color: #37352f29;
+  --secondary-color-dark: #ffffff21;
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
