@@ -23,7 +23,7 @@ const cssVars = {
 
 // Time
 
-let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 12, 6))
+let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 12, 9))
 
 if (import.meta.env.PROD) {
   setInterval(() => now = new Date(), 6e4)
