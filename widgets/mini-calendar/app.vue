@@ -20,7 +20,7 @@ const props = defineProps({
 
 // Date
 
-let now = $ref(import.meta.env.PROD ? new Date() : new Date())
+let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 10))
 const nowDate = $computed(() => now.getDate())
 const firstWeekday = $computed(() => new Date(now.getFullYear(), now.getMonth(), 1).getDay())
 const maxDate = $computed(() => new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate())

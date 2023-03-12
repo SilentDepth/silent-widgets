@@ -23,7 +23,7 @@ const props = defineProps({
 
 const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-let now = $ref(import.meta.env.DEV ? new Date(2023, 2, 20) : new Date())
+let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 8))
 const months = $computed(() => {
   const febDays = new Date(now.getFullYear(), 2, 0).getDate()
   return Array.from({ length: 12 }, (_, idx) => ({

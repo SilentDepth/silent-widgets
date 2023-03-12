@@ -48,7 +48,7 @@ const error = $computed(() => {
   }
 })
 
-let now = $ref(new Date())
+let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 11))
 const diff = $computed(() => {
   if (typeof date === 'symbol') return null
   const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate())

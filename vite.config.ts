@@ -21,6 +21,7 @@ export default defineConfig({
   },
   appType: 'mpa',
   root: './widgets',
+  publicDir: resolve(__dirname, 'public'),
   build: {
     outDir: '../dist',
     emptyOutDir: true,
