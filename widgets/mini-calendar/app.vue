@@ -1,4 +1,9 @@
 <script lang="ts" setup>
+import useI18n from '~/composables/use-i18n'
+import langs from './lang'
+
+const { t } = useI18n(langs)
+
 const props = defineProps({
   primary: {
     type: String,
@@ -20,7 +25,8 @@ const props = defineProps({
 
 // Date
 
-let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 3, 30))
+let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 1))
+const nowMonth = $computed(() => now.getMonth() + 1)
 const nowDate = $computed(() => now.getDate())
 const firstWeekday = $computed(() => new Date(now.getFullYear(), now.getMonth(), 1).getDay())
 const maxDate = $computed(() => new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate())
@@ -32,6 +38,7 @@ const dates = $computed(() => Array.from({ length: maxDate }, (_, idx) => {
     today: date === nowDate,
   }
 }))
+const firstDateColStart = $computed(() => (dates[0].day - Number(props.weekstart) + 7) % 7 + 1)
 
 if (import.meta.env.PROD) {
   setInterval(() => now = new Date(), 60000)
@@ -55,10 +62,11 @@ const cssVars = {
 <template lang="pug">
 div.root(class="h-screen overflow-hidden bg-[var(--bg-color)] dark:bg-[var(--bg-color-dark)] grid place-content-center" :style="cssVars")
   div.widget(class="grid place-items-center")
-    div.cell(
+    div.month(class="col-span-6 justify-self-start") {{ t(`month.${nowMonth}`) }}
+    div.dot(
       v-for="d of dates"
       :class="['aspect-square rounded-full', d.today ? 'today leading-none grid place-content-center' : '', d.day === 0 || d.day === 6 ? 'bg-[var(--secondary-color)] dark:bg-[var(--secondary-color-dark)]' : 'bg-[var(--primary-color)] dark:bg-[var(--primary-color-dark)]']"
-      :style="{ gridColumnStart: d.date === 1 ? (d.day - Number(props.weekstart) + 7) % 7 + 1 : null }"
+      :style="{ gridColumnStart: d.date === 1 ? firstDateColStart : null }"
     )
       span(v-if="d.today" class="text-[var(--bg-color)] dark:text-[var(--bg-color-dark)]") {{ d.date }}
 </template>
@@ -72,16 +80,20 @@ div.root(class="h-screen overflow-hidden bg-[var(--bg-color)] dark:bg-[var(--bg-
 }
 
 .widget {
+  font-size: clamp(12px, calc(var(--cell-size) / 1.7), 9999px);
   grid-template-columns: repeat(7, var(--cell-size));
   grid-template-rows: repeat(6, var(--cell-size));
 }
 
-.cell {
+.month {
+  padding-left: calc((var(--cell-size) - var(--dot-size)) / 2);
+}
+
+.dot {
   width: var(--dot-size);
 
   &.today {
     width: 100%;
-    font-size: clamp(12px, calc(var(--cell-size) / 1.7), 9999px);
   }
 }
 </style>
