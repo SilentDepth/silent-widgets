@@ -20,7 +20,7 @@ const props = defineProps({
 
 // Date
 
-let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 10))
+let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 3, 30))
 const nowDate = $computed(() => now.getDate())
 const firstWeekday = $computed(() => new Date(now.getFullYear(), now.getMonth(), 1).getDay())
 const maxDate = $computed(() => new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate())
@@ -53,46 +53,35 @@ const cssVars = {
 </script>
 
 <template lang="pug">
-div.widget(class="h-screen overflow-hidden0 bg-[var(--bg-color)] dark:bg-[var(--bg-color-dark)] grid place-content-center place-items-center" :style="cssVars")
-  div.cell(
-    v-for="d of dates"
-    :class="['rounded-full', d.today ? 'today box-content grid place-content-center' : '', d.day === 0 || d.day === 6 ? 'bg-[var(--secondary-color)] dark:bg-[var(--secondary-color-dark)]' : 'bg-[var(--primary-color)] dark:bg-[var(--primary-color-dark)]']"
-    :style="{ gridColumnStart: d.date === 1 ? (d.day - Number(props.weekstart) + 7) % 7 + 1 : null }"
-  )
-    span(v-if="d.today" class="text-[var(--bg-color)] dark:text-[var(--bg-color-dark)]") {{ d.date }}
+div.root(class="h-screen overflow-hidden bg-[var(--bg-color)] dark:bg-[var(--bg-color-dark)] grid place-content-center" :style="cssVars")
+  div.widget(class="grid place-items-center")
+    div.cell(
+      v-for="d of dates"
+      :class="['aspect-square rounded-full', d.today ? 'today leading-none grid place-content-center' : '', d.day === 0 || d.day === 6 ? 'bg-[var(--secondary-color)] dark:bg-[var(--secondary-color-dark)]' : 'bg-[var(--primary-color)] dark:bg-[var(--primary-color-dark)]']"
+      :style="{ gridColumnStart: d.date === 1 ? (d.day - Number(props.weekstart) + 7) % 7 + 1 : null }"
+    )
+      span(v-if="d.today" class="text-[var(--bg-color)] dark:text-[var(--bg-color-dark)]") {{ d.date }}
 </template>
 
-<style scoped>
-.widget {
-  @apply text-sm;
-  --cell-size: 24px;
-  --dot-size: 8px;
-}
-
-@media (max-height: 143px) {
-  .widget {
-    @apply text-xs;
-    --cell-size: 16px;
-    --dot-size: 6px;
-  }
-
-  .cell.today {
-    padding: 2px;
-  }
+<style lang="scss" scoped>
+.root {
+  --widget-width: calc(100vw - 2px);
+  --widget-height: calc(100vh - 2px);
+  --cell-size: min(calc(var(--widget-width) / 7), calc(var(--widget-height) / 6));
+  --dot-size: clamp(6px, calc(var(--cell-size) / 3.3), 9999px);
 }
 
 .widget {
   grid-template-columns: repeat(7, var(--cell-size));
-  grid-auto-rows: var(--cell-size);
+  grid-template-rows: repeat(6, var(--cell-size));
 }
 
 .cell {
   width: var(--dot-size);
-  height: var(--dot-size);
-}
 
-.cell.today {
-  width: 100%;
-  height: 100%;
+  &.today {
+    width: 100%;
+    font-size: clamp(12px, calc(var(--cell-size) / 1.7), 9999px);
+  }
 }
 </style>
