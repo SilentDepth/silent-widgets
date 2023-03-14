@@ -25,7 +25,7 @@ const props = defineProps({
 
 // Date
 
-let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 1))
+let now = $ref(import.meta.env.PROD ? new Date() : new Date(2023, 2, 10))
 const nowMonth = $computed(() => now.getMonth() + 1)
 const nowDate = $computed(() => now.getDate())
 const firstWeekday = $computed(() => new Date(now.getFullYear(), now.getMonth(), 1).getDay())
