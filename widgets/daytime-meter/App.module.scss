@@ -1,0 +1,40 @@
+.widget {
+  --sun-size: 10vmin;
+  --orbit-size: calc(100vmin - 20px - var(--sun-size));
+
+  background: var(--bg-color);
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--bg-color-dark);
+  }
+}
+
+.orbit {
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+}
+
+.day {
+  background: var(--bg-color);
+  border-color: var(--secondary-color);
+
+  @media (prefers-color-scheme: dark) {
+    border-color: transparent;
+  }
+}
+
+.night {
+  background: var(--bg-color-dark);
+  border-color: transparent;
+
+  @media (prefers-color-scheme: dark) {
+    border-color: var(--secondary-color-dark);
+  }
+}
+
+.sun {
+  width: var(--sun-size);
+  height: var(--sun-size);
+  background: var(--sun-color);
+  box-shadow: 0 0 10px var(--sun-color);
+}

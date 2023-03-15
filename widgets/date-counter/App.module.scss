@@ -1,0 +1,28 @@
+.widget {
+  color: var(--primary-color);
+  background: var(--bg-color);
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--primary-color-dark);
+    background: var(--bg-color-dark);
+  }
+}
+
+.diff {
+  color: var(--secondary-color);
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--secondary-color-dark);
+  }
+}
+
+.unit {
+  color: var(--bg-color);
+  background: var(--secondary-color);
+  border-radius: 3px;
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--bg-color-dark);
+    background: var(--secondary-color-dark);
+  }
+}

@@ -4,7 +4,7 @@ import { defineConfig } from 'vite'
 import unocss from 'unocss/vite'
 import presetUno from 'unocss/preset-uno'
 import transformerDirectives from '@unocss/transformer-directives'
-import vue from '@vitejs/plugin-vue'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [
@@ -12,7 +12,7 @@ export default defineConfig({
       presets: [presetUno({ dark: 'media' })],
       transformers: [transformerDirectives()],
     }),
-    vue({ reactivityTransform: true }),
+    react(),
   ],
   resolve: {
     alias: {
