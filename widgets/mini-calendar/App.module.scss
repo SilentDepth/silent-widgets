@@ -1,0 +1,32 @@
+.root {
+  --widget-width: calc(100vw - 2px);
+  --widget-height: calc(100vh - 2px);
+  --cell-size: min(calc(var(--widget-width) / 7), calc(var(--widget-height) / 6));
+  --dot-size: clamp(6px, calc(var(--cell-size) / 3.3), 9999px);
+
+  background: var(--bg-color);
+  color: var(--primary-color);
+
+  @media (prefers-color-scheme: dark) {
+    background: var(--bg-color-dark);
+    color: var(--primary-color-dark);
+  }
+}
+
+.widget {
+  font-size: clamp(12px, calc(var(--cell-size) / 1.7), 9999px);
+  grid-template-columns: repeat(7, var(--cell-size));
+  grid-template-rows: repeat(6, var(--cell-size));
+}
+
+.month {
+  padding-left: calc((var(--cell-size) - var(--dot-size)) / 2);
+}
+
+.dot {
+  width: var(--dot-size);
+
+  &.today {
+    width: 100%;
+  }
+}
