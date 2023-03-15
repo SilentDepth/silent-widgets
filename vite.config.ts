@@ -5,7 +5,6 @@ import unocss from 'unocss/vite'
 import presetUno from 'unocss/preset-uno'
 import transformerDirectives from '@unocss/transformer-directives'
 import react from '@vitejs/plugin-react'
-import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [
@@ -14,7 +13,6 @@ export default defineConfig({
       transformers: [transformerDirectives()],
     }),
     react(),
-    vue({ reactivityTransform: true }),
   ],
   resolve: {
     alias: {
