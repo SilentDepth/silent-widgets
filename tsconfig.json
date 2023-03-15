@@ -5,11 +5,13 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "strict": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "noEmit": true,
     "baseUrl": "./",
@@ -23,6 +25,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "widgets/**/*.ts",
+    "widgets/**/*.tsx",
     "widgets/**/*.vue"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

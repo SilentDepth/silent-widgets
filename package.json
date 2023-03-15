@@ -10,11 +10,17 @@
   },
   "dependencies": {
     "@vercel/analytics": "^0.1.11",
+    "classnames": "^2.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "vue": "^3.2.45"
   },
   "devDependencies": {
     "@types/node": "^18.15.0",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
     "@unocss/transformer-directives": "^0.50.4",
+    "@vitejs/plugin-react": "^3.1.0",
     "@vitejs/plugin-vue": "^4.0.0",
     "@volar/vue-language-plugin-pug": "^1.2.0",
     "pug": "^3.0.2",
