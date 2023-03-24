@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { ApolloClient, gql, InMemoryCache, useQuery } from '@apollo/client'
+import { type ReactNode, useEffect } from 'react'
+import { ApolloClient, ApolloQueryResult, gql, InMemoryCache, QueryResult, useQuery } from '@apollo/client'
 import cn from 'classnames'
 
 import css from './App.module.scss'
@@ -44,12 +44,12 @@ export default function App (props: Props) {
   }
 
   const [owner, name] = repo?.split('/') ?? []
-  const { loading, error, data } = import.meta.env.DEV
+  const { loading, error, data, startPolling, stopPolling } = import.meta.env.DEV
     ? {
       loading: false,
-      error: false,
+      error: false as any,
       data: { repository: { stargazerCount: 2039 } },
-    }
+    } as Pick<QueryResult, 'loading' | 'error' | 'data' | 'startPolling' | 'stopPolling'>
     : useQuery(QUERY_REPO_STARGAZER_COUNT, {
       client,
       variables: { owner, name },
@@ -58,10 +58,16 @@ export default function App (props: Props) {
     ? humanize ? humanizeNumber(data.repository.stargazerCount) : data.repository.stargazerCount
     : 0
 
+  if (!import.meta.env.DEV)
+  useEffect(() => {
+    startPolling(6e5 /* 10 minutes */)
+    return stopPolling
+  }, [])
+
   return (
     <Widget>
-      <div className="text-sm leading-none">{owner}</div>
-      <div className="mt-0.5 text-sm leading-none font-bold">{name}</div>
+      <div className="text-sm leading-none">{owner || '???'}</div>
+      <div className="mt-0.5 text-sm leading-none font-bold">{name || '???'}</div>
       <Badge loading={loading} error={error} value={count} className="mt-1"/>
     </Widget>
   )
