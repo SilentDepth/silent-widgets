@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect } from 'react'
-import { ApolloClient, ApolloQueryResult, gql, InMemoryCache, QueryResult, useQuery } from '@apollo/client'
+import { type CSSProperties, type ReactNode, useEffect } from 'react'
+import { ApolloClient, gql, InMemoryCache, QueryResult, useQuery } from '@apollo/client'
 import cn from 'classnames'
 
 import css from './App.module.scss'
@@ -20,12 +20,14 @@ const QUERY_REPO_STARGAZER_COUNT = gql`
 type Props = {
   repo: string
   humanize: boolean
+  star: string
 }
 
 export default function App (props: Props) {
   const {
     repo,
     humanize = false,
+    star = '#fbbf24,#d97706',
   } = props as Partial<Props>
 
   if (typeof repo !== 'string' || !repo) {
@@ -64,8 +66,16 @@ export default function App (props: Props) {
     return stopPolling
   }, [])
 
+  // Colors
+
+  const starColors = star.split(',')
+  const cssVars = {
+    '--star-color': starColors[0],
+    '--star-color-dark': starColors[1] || starColors[0],
+  } as CSSProperties
+
   return (
-    <Widget>
+    <Widget style={cssVars}>
       <div className="text-sm leading-none">{owner || '???'}</div>
       <div className="mt-0.5 text-sm leading-none font-bold">{name || '???'}</div>
       <Badge loading={loading} error={error} value={count} className="mt-1"/>
@@ -73,9 +83,9 @@ export default function App (props: Props) {
   )
 }
 
-function Widget ({ children }: { children: ReactNode }) {
+function Widget ({ style, children }: { style?: CSSProperties, children: ReactNode }) {
   return (
-    <div className={cn(css.frame, 'h-screen overflow-hidden grid place-content-center')}>
+    <div className={cn(css.frame, 'h-screen overflow-hidden grid place-content-center')} style={style}>
       <div className="flex flex-col items-center">
         {children}
       </div>
@@ -109,7 +119,7 @@ function Badge ({ loading, error, value, className }: BadgeProps) {
         ) : (
           <path
             d="M12 18.26l-7.053 3.948 1.575-7.928L.587 8.792l8.027-.952L12 .5l3.386 7.34 8.027.952-5.935 5.488 1.575 7.928z"
-            className="fill-amber-400 dark:fill-amber-600"
+            className={css.star}
           />
         )}
       </svg>

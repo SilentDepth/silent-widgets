@@ -21,3 +21,11 @@
     @apply px-10 bg-red-600;
   }
 }
+
+.star {
+  fill: var(--star-color);
+
+  @media (prefers-color-scheme: dark) {
+    fill: var(--star-color-dark);
+  }
+}
