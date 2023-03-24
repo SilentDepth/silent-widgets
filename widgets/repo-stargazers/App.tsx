@@ -20,6 +20,7 @@ const QUERY_REPO_STARGAZER_COUNT = gql`
 type Props = {
   repo: string
   humanize: boolean
+  primary: string
   star: string
 }
 
@@ -27,6 +28,7 @@ export default function App (props: Props) {
   const {
     repo,
     humanize = false,
+    primary,
     star = '#fbbf24,#d97706',
   } = props as Partial<Props>
 
@@ -68,8 +70,13 @@ export default function App (props: Props) {
 
   // Colors
 
+  const primaryColors = primary?.split(',')
   const starColors = star.split(',')
   const cssVars = {
+    ...!primaryColors ? {} : {
+      '--primary-color': primaryColors[0],
+      '--primary-color-dark': primaryColors[1] || primaryColors[0],
+    },
     '--star-color': starColors[0],
     '--star-color-dark': starColors[1] || starColors[0],
   } as CSSProperties
