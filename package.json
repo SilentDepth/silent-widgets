@@ -5,13 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev-api": "vc dev",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.10",
     "@vercel/analytics": "^0.1.11",
     "classnames": "^2.3.2",
     "defu": "^6.1.2",
+    "graphql": "^16.6.0",
+    "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -20,6 +24,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@unocss/transformer-directives": "^0.50.6",
+    "@vercel/node": "^2.10.0",
     "@vitejs/plugin-react": "^3.1.0",
     "sass": "^1.59.3",
     "typescript": "^5.0.2",

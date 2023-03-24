@@ -1,0 +1,23 @@
+.frame {
+  color: var(--primary-color);
+  background: var(--bg-color);
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--primary-color-dark);
+    background: var(--bg-color-dark);
+  }
+}
+
+.badge {
+  color: var(--bg-color);
+  background: var(--primary-color);
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--bg-color-dark);
+    background: var(--primary-color-dark);
+  }
+
+  &:global(.error) {
+    @apply px-10 bg-red-600;
+  }
+}
