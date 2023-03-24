@@ -5,13 +5,11 @@ import cn from 'classnames'
 import css from './App.module.scss'
 
 type Props = {
-  bg: string
   sun: string
 }
 
 export default function App (props: Props) {
   props = defu(props, {
-    bg: '',
     sun: '#f59e0b',
   })
 
@@ -42,11 +40,8 @@ export default function App (props: Props) {
 
   // Colors
 
-  const bgColors = props.bg.split(',')
   const cssVars = {
     '--sun-color': props.sun,
-    '--bg-color': bgColors[0],
-    '--bg-color-dark': bgColors[1] || bgColors[0],
   } as CSSProperties
 
   return (

@@ -10,7 +10,6 @@ type Props = {
   weekstart: string
   primary: string
   secondary: string
-  bg: string
 }
 
 export default function App (props: Props) {
@@ -20,7 +19,6 @@ export default function App (props: Props) {
     weekstart: '0',
     primary: '#37352f,#ffffffcf',
     secondary: '#37352f6b,#ffffff47',
-    bg: '#ffffff,#191919',
   } as Partial<Props>)
 
   // Date
@@ -58,14 +56,11 @@ export default function App (props: Props) {
 
   const primaryColors = props.primary.split(',')
   const secondaryColors = props.secondary.split(',')
-  const bgColors = props.bg.split(',')
   const cssVars = {
     '--primary-color': primaryColors[0],
     '--primary-color-dark': primaryColors[1] || primaryColors[0],
     '--secondary-color': secondaryColors[0],
     '--secondary-color-dark': secondaryColors[1] || secondaryColors[0],
-    '--bg-color': bgColors[0],
-    '--bg-color-dark': bgColors[1] || bgColors[0],
   } as CSSProperties
 
   return (

@@ -8,13 +8,11 @@ const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 type Props = {
   primary: string
   secondary: string
-  bg: string
 }
 
 export default function App ({
   primary = '#37352f,#ffffffcf',
   secondary = '#37352f29,#ffffff21',
-  bg = '#ffffff,#191919',
 }: Props) {
   const { t } = useI18n(langs)
 
@@ -44,19 +42,16 @@ export default function App ({
 
   const primaryColors = primary.split(',')
   const secondaryColors = secondary.split(',')
-  const bgColors = bg.split(',')
   const cssVars = {
     '--primary-color': primaryColors[0],
     '--primary-color-dark': primaryColors[1] || primaryColors[0],
     '--secondary-color': secondaryColors[0],
     '--secondary-color-dark': secondaryColors[1] || secondaryColors[0],
-    '--bg-color': bgColors[0],
-    '--bg-color-dark': bgColors[1] || bgColors[0],
   } as CSSProperties
 
   return (
     <div
-      className="h-screen overflow-hidden bg-[var(--bg-color)] dark:bg-[var(--bg-color-dark)] text-[var(--primary-color)] dark:text-[var(--primary-color-dark)] text-xs leading-none whitespace-nowrap flex items-center space-x-0.5"
+      className="h-screen overflow-hidden text-[var(--primary-color)] dark:text-[var(--primary-color-dark)] text-xs leading-none whitespace-nowrap flex items-center space-x-0.5"
       style={cssVars}
     >
       {months.map(m => (
