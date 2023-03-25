@@ -47,8 +47,8 @@ export default function App (props: Props) {
   return (
     <div className={cn(css.widget, 'h-screen overflow-hidden grid place-content-center')} style={cssVars}>
       <div className={cn(css.orbit, 'relative flex flex-col')}>
-        <div className={cn(css.day, 'flex-1 border border-b-0 border-solid rounded-t-full')}></div>
-        <div className={cn(css.night, 'flex-1 border border-t-0 border-solid rounded-b-full')}></div>
+        <div className={cn(css.day, 'flex-1 border-2 border-b-0 border-solid rounded-t-full')}></div>
+        <div className={cn(css.night, 'flex-1 border-2 border-t-0 border-solid rounded-b-full')}></div>
         <div
           className="absolute bottom-0 inset-x-0 mx-auto w-0 h-1/2 origin-top flex flex-col justify-end items-center"
           style={{ transform: `rotate(${angle}deg)` }}
