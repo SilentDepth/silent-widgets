@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.10",
-    "@vercel/analytics": "^0.1.11",
+    "@apollo/client": "^3.7.14",
+    "@vercel/analytics": "^1.0.1",
     "classnames": "^2.3.2",
     "defu": "^6.1.2",
     "graphql": "^16.6.0",
@@ -20,15 +20,15 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^18.15.5",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "@unocss/transformer-directives": "^0.50.6",
-    "@vercel/node": "^2.10.0",
-    "@vitejs/plugin-react": "^3.1.0",
-    "sass": "^1.59.3",
-    "typescript": "^5.0.2",
-    "unocss": "^0.50.6",
-    "vite": "^4.2.1"
+    "@types/node": "^18.16.9",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "@unocss/transformer-directives": "^0.51.12",
+    "@vercel/node": "^2.14.2",
+    "@vitejs/plugin-react": "^4.0.0",
+    "sass": "^1.62.1",
+    "typescript": "^5.0.4",
+    "unocss": "^0.51.12",
+    "vite": "^4.3.5"
   }
 }
