@@ -42,7 +42,7 @@ export default function App (props: Props) {
     }
   })()
 
-  const [now, setNow] = useState(import.meta.env.PROD ? new Date() : new Date('2023-03-11'))
+  const [now, setNow] = useState(import.meta.env.PROD ? new Date() : new Date())
   const diff = (() => {
     if (typeof date === 'symbol') return null
     const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -87,12 +87,10 @@ export default function App (props: Props) {
       ) : (
         <>
           {props.event && (
-            <div className="mb-1">
-              <span className={cn(css.event, 'font-medium')}>{props.event}</span>
-              <span className={cn(css.diff)}>{diffLabel}</span>
-            </div>
+            <div className={cn(css.event, 'mb-1 font-medium')}>{props.event}</div>
           )}
-          <div className="relative">
+          <div className="relative whitespace-nowrap">
+            <span className={cn(css.diff, 'absolute top-0 right-full mt-1 mr-1 block leading-none text-sm font-medium')}>{diffLabel}</span>
             <span className={cn(css.value, 'leading-none text-4xl font-medium')}>{diffValue}</span>
             {Boolean(diff) && (
               <span className={cn(css.unit, 'absolute bottom-0 left-full mb-1 ml-1 block leading-none px-1 py-0.5 text-sm font-medium')}>{unit}</span>

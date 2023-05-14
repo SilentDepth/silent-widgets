@@ -1,7 +1,7 @@
 {
-  "diff.is_future": " in",
-  "diff.is_today": " is",
-  "diff.is_past": " has passed for",
+  "diff.is_future": "In",
+  "diff.is_today": "Is",
+  "diff.is_past": "Passed",
   "diff.today": "Today",
   "unit.day": "Day",
   "unit.day.plural": "Days",
