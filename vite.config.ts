@@ -1,37 +1,52 @@
-import { resolve } from 'node:path'
-import fs from 'node:fs'
-import { defineConfig } from 'vite'
-import unocss from 'unocss/vite'
-import presetUno from 'unocss/preset-uno'
 import transformerDirectives from '@unocss/transformer-directives'
-import react from '@vitejs/plugin-react'
+import vue from '@vitejs/plugin-vue'
+import { nitro } from 'nitro/vite'
+import presetUno from 'unocss/preset-uno'
+import unocss from 'unocss/vite'
+import { defineConfig } from 'vite-plus'
 
 export default defineConfig({
+  staged: {
+    '*': 'vp check --fix',
+  },
+  fmt: {
+    semi: false,
+    singleQuote: true,
+    arrowParens: 'avoid',
+    sortImports: {
+      groups: [
+        'builtin',
+        'side_effect',
+        'external',
+        'unplugin-icons',
+        'src-aliases',
+        ['parent', 'sibling', 'index'],
+        'unknown',
+      ],
+      customGroups: [
+        {
+          groupName: 'unplugin-icons',
+          elementNamePattern: ['~icons/**'],
+        },
+        {
+          groupName: 'src-aliases',
+          elementNamePattern: ['#/**'],
+        },
+      ],
+      newlinesBetween: false,
+      partitionByNewline: false,
+    },
+  },
+  lint: { options: { typeAware: true, typeCheck: true } },
   plugins: [
+    nitro(),
+    vue(),
     unocss({
       presets: [presetUno({ dark: 'media' })],
       transformers: [transformerDirectives()],
     }),
-    react(),
   ],
   resolve: {
-    alias: {
-      '~/': resolve(__dirname, 'src') + '/',
-    },
-  },
-  appType: 'mpa',
-  root: './widgets',
-  publicDir: resolve(__dirname, 'public'),
-  build: {
-    outDir: '../dist',
-    emptyOutDir: true,
-    rollupOptions: {
-      input: resolveBuildInputs(),
-    },
+    tsconfigPaths: true,
   },
 })
-
-function resolveBuildInputs () {
-  const names = fs.readdirSync(resolve(__dirname, 'widgets'))
-  return Object.fromEntries(names.map(name => [name, resolve(__dirname, 'widgets', name, 'index.html')]))
-}

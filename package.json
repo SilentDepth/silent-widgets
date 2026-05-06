@@ -1,13 +1,13 @@
 {
   "name": "silent-widgets",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev-api": "vc dev",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "portless widgets sh -c 'vp dev --port $PORT --host'",
+    "build": "vp build",
+    "preview": "vp preview",
+    "prepare": "vp config"
   },
   "dependencies": {
     "@apollo/client": "^3.7.14",
@@ -17,7 +17,8 @@
     "graphql": "^16.6.0",
     "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "vue": "3.6.0-beta.10"
   },
   "devDependencies": {
     "@types/node": "^18.16.9",
@@ -26,10 +27,13 @@
     "@unocss/transformer-directives": "^0.51.12",
     "@vercel/node": "^2.14.2",
     "@vitejs/plugin-react": "^4.0.0",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "nitro": "latest",
     "sass": "^1.62.1",
-    "typescript": "^5.0.4",
+    "typescript": "^6.0.3",
     "unocss": "^0.51.12",
-    "vite": "^4.3.5"
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
   },
   "packageManager": "pnpm@10.33.2+sha512.a90faf6feeab71ad6c6e57f94e0fe1a12f5dcc22cd754db40ae9593eb6a3e0b6b12e3540218bb37ae083404b1f2ce6db2a4121e979829b4aff94b99f49da1cf8"
 }
