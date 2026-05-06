@@ -1,6 +1,6 @@
 import { computedAsync } from '@vueuse/core'
 import type { ValueOf } from 'type-fest'
-import { ref, watchEffect } from 'vue'
+import { computed, ref } from 'vue'
 import { getI18nResource } from '@/widgets'
 
 export const SupportedLang = {
@@ -9,18 +9,17 @@ export const SupportedLang = {
 } as const
 export type SupportedLang = ValueOf<typeof SupportedLang>
 
-const DEFAULT_LANG = SupportedLang.enUS
-export const lang = ref(DEFAULT_LANG)
-
-watchEffect(() => {
-  if (!Object.values(SupportedLang).includes(lang.value)) {
-    lang.value = DEFAULT_LANG
-  }
+const DEFAULT_LANG: SupportedLang = SupportedLang.enUS
+const _lang = ref<SupportedLang>(DEFAULT_LANG)
+export const lang = computed({
+  get: () => _lang.value,
+  set: (value: string) => {
+    _lang.value = isSupportedLang(value) ? value : DEFAULT_LANG
+  },
 })
 
-// TODO: Implement `?lang` support
-function resolveDefaultLang() {
-  return new URL(location.href).searchParams.get('lang') || navigator.language
+function isSupportedLang(value: unknown): value is SupportedLang {
+  return Object.values(SupportedLang).includes(value as SupportedLang)
 }
 
 export default function useI18n(name: string) {

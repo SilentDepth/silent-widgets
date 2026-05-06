@@ -1,0 +1,10 @@
+{
+  "diff.is_future": "In",
+  "diff.is_today": "Is",
+  "diff.is_past": "Passed",
+  "diff.today": "Today",
+  "unit.day": "Day",
+  "unit.day.plural": "Days",
+  "error.no_date": "Date not set",
+  "error.invalid_date": "Date is invalid"
+}
