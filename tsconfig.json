@@ -1,10 +1,12 @@
 {
   "extends": ["nitro/tsconfig"],
   "compilerOptions": {
+    "allowImportingTsExtensions": false,
+
+    "types": ["vite/client"],
     "paths": {
       "~/*": ["./src/*"],
       "@/*": ["./app/*"]
     }
-  },
-  "include": ["./app/**", "./server/**"]
+  }
 }

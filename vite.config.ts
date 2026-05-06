@@ -1,8 +1,6 @@
-import transformerDirectives from '@unocss/transformer-directives'
+import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { nitro } from 'nitro/vite'
-import presetUno from 'unocss/preset-uno'
-import unocss from 'unocss/vite'
 import { defineConfig } from 'vite-plus'
 
 export default defineConfig({
@@ -38,14 +36,7 @@ export default defineConfig({
     },
   },
   lint: { options: { typeAware: true, typeCheck: true } },
-  plugins: [
-    nitro(),
-    vue(),
-    unocss({
-      presets: [presetUno({ dark: 'media' })],
-      transformers: [transformerDirectives()],
-    }),
-  ],
+  plugins: [nitro(), vue(), tailwindcss()],
   resolve: {
     tsconfigPaths: true,
   },

@@ -1,13 +1,23 @@
-<script setup lang="ts"></script>
+<script setup vapor lang="ts">
+import { useHead } from '@unhead/vue'
+import { computedAsync } from '@vueuse/core'
+import { lang } from '@/composables/use-i18n'
+import { getWidget } from '@/widgets'
+
+const props = defineProps<{ name: string }>()
+
+useHead({
+  htmlAttrs: {
+    lang: lang.value,
+  },
+})
+
+const Widget = computedAsync(() => getWidget(props.name))
+</script>
 
 <template>
   <div>
-    <h1>Nitro + Vite + Vue</h1>
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto aspernatur culpa cum
-      deleniti dignissimos distinctio fugit iure minima odit, placeat, quam quod ullam veniam? Culpa
-      nemo nulla officia repudiandae sequi?
-    </p>
+    <component :is="Widget" />
   </div>
 </template>
 
