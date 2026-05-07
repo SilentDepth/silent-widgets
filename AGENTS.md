@@ -1,3 +1,5 @@
+<!--NITRO START-->
+
 This project is based on [Nitro](https://nitro.build) v3, [h3](https://h3.dev/), [Vite](https://vite.dev/) and [rolldown](https://rolldown.rs/).
 
 ## Project Structure
@@ -35,6 +37,8 @@ This project is based on [Nitro](https://nitro.build) v3, [h3](https://h3.dev/),
 
 **Nitro v3 / H3 v2 migration:** `nitropack/runtime/*` → `nitro/*` (e.g. `nitro/storage`, `nitro/task`, `nitro/types`); all h3 imports from `nitro/h3`; `eventHandler()`/`defineEventHandler()` → `defineHandler()`; `createError()`/`H3Error` → `HTTPError`; `event.path` → `event.url.pathname`; `event.web` → `event.req` (native `Request`); body via `event.req.json()`/`.text()`/`.formData()`; headers via `event.req.headers.get()`/`event.res.headers.set()`; status via `event.res.status`; always `return` values (`return redirect(loc, code)`); `sendError()` → `throw HTTPError`; `sendNoContent()` → `return noContent()`; `useAppConfig()` removed.
 
+<!--NITRO END-->
+
 <!--VITE PLUS START-->
 
 # Using Vite+, the Unified Toolchain for the Web
@@ -50,3 +54,9 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 - [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
 
 <!--VITE PLUS END-->
+
+<!--DEPLOYMENT START-->
+
+This project should be runnable on Cloudflare Workers. Avoid using Node.js API if it is not compatible to Cloudflare Workers.
+
+<!--DEPLOYMENT END-->
