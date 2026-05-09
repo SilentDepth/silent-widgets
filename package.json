@@ -13,7 +13,7 @@
     "@unhead/vue": "3.0.0-beta.9",
     "@vueuse/core": "^14.3.0",
     "arktype": "^2.2.0",
-    "vue": "3.6.0-beta.10"
+    "vue": "3.6.0-beta.11"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.4",

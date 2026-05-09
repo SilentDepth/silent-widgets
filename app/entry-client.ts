@@ -6,9 +6,7 @@ import { fetchResource } from '@/composables/use-i18n'
 import { parseWidgetInit } from '@/utils/widget-utils'
 
 async function main() {
-  const { name, params, styleProps } = parseWidgetInit(location.href, {
-    navigator: window.navigator,
-  })
+  const { name, params, styleProps } = parseWidgetInit(location.href)
   const lang = match
     .case({ params: { lang: 'string >= 2' } }, ({ params }) => params.lang)
     .default(() => navigator.language)({ params })

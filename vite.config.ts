@@ -40,9 +40,6 @@ export default defineConfig({
   environments: {
     client: { build: { rolldownOptions: { input: './app/entry-client.ts' } } },
     ssr: {
-      // resolve: {
-      //   noExternal: [/^(?:vue|@vue)(?:\/.*)?$/],
-      // },
       build: { rolldownOptions: { input: './app/entry-server.ts' } },
     },
   },

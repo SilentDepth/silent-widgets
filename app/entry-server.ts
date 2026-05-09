@@ -12,7 +12,7 @@ export default {
   fetch: async (req: Request) => {
     console.log('Request:', req.url)
 
-    const { name, params, styleProps } = parseWidgetInit(req.url, { request: req })
+    const { name, params, styleProps } = parseWidgetInit(req.url)
     const lang = match
       .case({ params: { lang: 'string >= 2' } }, ({ params }) => params.lang)
       .case(
