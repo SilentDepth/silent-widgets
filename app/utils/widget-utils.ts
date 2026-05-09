@@ -6,7 +6,7 @@ function normalizeParams(params: Record<string, string>) {
   ) as Record<string, string | boolean>
 }
 
-export function parseWidgetInit(url: string, ctx?: { request?: Request; navigator?: Navigator }) {
+export function parseWidgetInit(url: string) {
   const urlObj = new URL(url)
   const name = urlObj.pathname.split('/')[1]
   const params = normalizeParams(Object.fromEntries(urlObj.searchParams.entries()))
