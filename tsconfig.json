@@ -5,7 +5,6 @@
 
     "types": ["vite/client"],
     "paths": {
-      "~/*": ["./src/*"],
       "@/*": ["./app/*"]
     }
   }

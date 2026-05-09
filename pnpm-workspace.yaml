@@ -1,7 +1,11 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
 catalog:
   vite: npm:@voidzero-dev/vite-plus-core@latest
-  vitest: npm:@voidzero-dev/vite-plus-test@latest
   vite-plus: latest
+  vitest: npm:@voidzero-dev/vite-plus-test@latest
 overrides:
   vite: 'catalog:'
   vitest: 'catalog:'
