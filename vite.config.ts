@@ -36,11 +36,24 @@ export default defineConfig({
     },
   },
   lint: { options: { typeAware: true, typeCheck: true } },
+
   plugins: [vue(), tailwindcss(), nitro()],
+  devtools: {
+    enabled: true,
+  },
   environments: {
-    client: { build: { rolldownOptions: { input: './app/entry-client.ts' } } },
+    client: {
+      build: {
+        rolldownOptions: { input: './app/entry-client.ts', devtools: { sessionId: 'client' } },
+      },
+    },
     ssr: {
-      build: { rolldownOptions: { input: './app/entry-server.ts' } },
+      build: {
+        rolldownOptions: { input: './app/entry-server.ts', devtools: { sessionId: 'ssr' } },
+      },
+    },
+    nitro: {
+      build: { rolldownOptions: { devtools: { sessionId: 'nitro' } } },
     },
   },
   resolve: {

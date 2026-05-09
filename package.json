@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.4",
+    "@vitejs/devtools": "^0.1.20",
     "@vitejs/plugin-vue": "^6.0.6",
     "nitro": "latest",
     "tailwindcss": "^4.2.4",
