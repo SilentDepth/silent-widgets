@@ -1,7 +1,5 @@
-import { computedAsync } from '@vueuse/core'
 import type { JsonObject, ValueOf } from 'type-fest'
-import { computed, inject, ref, type InjectionKey } from 'vue'
-import { getI18nResource } from '@/widgets'
+import { inject, type InjectionKey } from 'vue'
 
 export const SupportedLang = {
   enUS: 'en-US',
@@ -10,11 +8,10 @@ export const SupportedLang = {
 export type SupportedLang = ValueOf<typeof SupportedLang>
 
 const DEFAULT_LANG: SupportedLang = SupportedLang.enUS
-export const i18nKey: InjectionKey<ReturnType<typeof createI18n>> = Symbol('i18n')
-
-function isSupportedLang(value: unknown): value is SupportedLang {
-  return Object.values(SupportedLang).includes(value as SupportedLang)
-}
+export const i18nKey: InjectionKey<{
+  lang: SupportedLang
+  resource?: JsonObject
+}> = Symbol('i18n')
 
 export function resolveLanguage(value: unknown): SupportedLang {
   if (typeof value !== 'string') return DEFAULT_LANG
@@ -41,37 +38,14 @@ export function resolveLanguage(value: unknown): SupportedLang {
   return DEFAULT_LANG
 }
 
-export function createI18n(initialLang: SupportedLang) {
-  const currentLang = ref(initialLang)
-  const lang = computed({
-    get: () => currentLang.value,
-    set: (value: string) => {
-      currentLang.value = isSupportedLang(value) ? value : DEFAULT_LANG
-    },
-  })
-  const cache = ref<Record<string, Record<string, JsonObject | undefined>>>({})
-
-  async function fetchResource(name: string, language: SupportedLang = lang.value) {
-    const resource = await getI18nResource(name, language)
-    cache.value[language] ??= {}
-    cache.value[language][name] = resource
-  }
-
-  return { lang, cache, fetchResource }
-}
-
-export default function useI18n(name: string) {
+export default function useI18n() {
   const i18n = inject(i18nKey)
   if (!i18n) throw new Error('The app must provide an i18n instance before rendering.')
 
-  const { lang, cache } = i18n
-  const resource = computedAsync(
-    () => getI18nResource(name, lang.value),
-    cache.value[lang.value]?.[name],
-  )
+  const { lang, resource } = i18n
 
   function t(key: string) {
-    return resource?.value?.[key] || key
+    return resource?.[key] || key
   }
 
   return {

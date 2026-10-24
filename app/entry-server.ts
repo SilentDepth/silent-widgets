@@ -1,7 +1,7 @@
 import { createHead, transformHtmlTemplate } from '@unhead/vue/server'
 import { createVaporSSRApp as createApp } from 'vue'
 import { renderToString } from 'vue/server-renderer'
-import { createI18n, i18nKey, resolveLanguage } from '@/composables/use-i18n'
+import { i18nKey, resolveLanguage } from '@/composables/use-i18n'
 import { parseWidgetInit } from '@/utils/widget-utils'
 import { getWidget } from '@/widgets'
 import indexHtml from '../index.html?raw'
@@ -12,18 +12,18 @@ export default {
     console.log('Request:', req.url)
 
     const { name, params, styleProps } = parseWidgetInit(req.url)
-    const i18n = createI18n(resolveLanguage(params.lang ?? req.headers.get('accept-language')))
-    const [Widget] = await Promise.all([getWidget(name), i18n.fetchResource(name)])
-    if (!Widget) return new Response('Widget not found', { status: 404 })
+    const lang = resolveLanguage(params.lang ?? req.headers.get('accept-language'))
+    const widget = await getWidget(name, lang)
+    if (!widget) return new Response('Widget not found', { status: 404 })
 
-    const app = createApp(Widget, params)
-    app.provide(i18nKey, i18n)
+    const app = createApp(widget.component, params)
+    app.provide(i18nKey, { lang, resource: widget.i18nResource })
 
     const head = createHead({
       init: [
         {
           htmlAttrs: {
-            lang: i18n.lang.value,
+            lang,
             style: Object.entries(styleProps)
               .map(entry => entry.join(':'))
               .join(';'),

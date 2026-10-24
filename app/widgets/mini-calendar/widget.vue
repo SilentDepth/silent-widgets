@@ -29,7 +29,7 @@ useHead({
   ],
 })
 
-const { t } = useI18n('mini-calendar')
+const { t } = useI18n()
 
 // Date
 

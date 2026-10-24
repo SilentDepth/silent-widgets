@@ -36,7 +36,7 @@ useHead({
   ],
 })
 
-const { t } = useI18n('date-counter')
+const { t } = useI18n()
 
 // Date
 

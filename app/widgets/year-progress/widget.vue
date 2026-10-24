@@ -30,7 +30,7 @@ useHead({
   ],
 })
 
-const { t } = useI18n('year-progress')
+const { t } = useI18n()
 
 // Date
 
