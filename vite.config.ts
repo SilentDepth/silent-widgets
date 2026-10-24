@@ -40,6 +40,7 @@ export default defineConfig({
   plugins: [nitro(), vue(), tailwindcss()],
   devtools: {
     enabled: true,
+    apply: 'serve',
   },
   environments: {
     client: {
