@@ -3,8 +3,8 @@ import { createVaporSSRApp as createApp } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { createI18n, i18nKey, resolveLanguage } from '@/composables/use-i18n'
 import { parseWidgetInit } from '@/utils/widget-utils'
+import { getWidget } from '@/widgets'
 import indexHtml from '../index.html?raw'
-import App from './app.vue'
 import assets from './entry-client?assets=client'
 
 export default {
@@ -13,9 +13,10 @@ export default {
 
     const { name, params, styleProps } = parseWidgetInit(req.url)
     const i18n = createI18n(resolveLanguage(params.lang ?? req.headers.get('accept-language')))
-    await i18n.fetchResource(name)
+    const [Widget] = await Promise.all([getWidget(name), i18n.fetchResource(name)])
+    if (!Widget) return new Response('Widget not found', { status: 404 })
 
-    const app = createApp(App, { name, params })
+    const app = createApp(Widget, params)
     app.provide(i18nKey, i18n)
 
     const head = createHead({
