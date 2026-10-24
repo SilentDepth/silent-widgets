@@ -1,5 +1,6 @@
 {
   "extends": ["nitro/tsconfig"],
+  "include": ["**/*", "**/*.vue"],
   "compilerOptions": {
     "allowImportingTsExtensions": false,
 

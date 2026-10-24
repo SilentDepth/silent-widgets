@@ -28,7 +28,7 @@ export default defineConfig({
         },
         {
           groupName: 'src-aliases',
-          elementNamePattern: ['#/**'],
+          elementNamePattern: ['@/**'],
         },
       ],
       newlinesBetween: false,
@@ -37,7 +37,7 @@ export default defineConfig({
   },
   lint: { options: { typeAware: true, typeCheck: true } },
 
-  plugins: [vue(), tailwindcss(), nitro()],
+  plugins: [nitro(), vue(), tailwindcss()],
   devtools: {
     enabled: true,
   },
