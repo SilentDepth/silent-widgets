@@ -4,7 +4,8 @@ const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 <script setup vapor lang="ts">
 import { useHead } from '@unhead/vue'
-import { computed, ref, watchEffect } from 'vue'
+import { useIntervalFn } from '@vueuse/core'
+import { computed, onMounted, ref } from 'vue'
 import useI18n from '@/composables/use-i18n'
 
 const props = defineProps({
@@ -47,12 +48,14 @@ const months = computed(() => {
 })
 
 if (import.meta.env.PROD) {
-  watchEffect(() => {
-    const int = setInterval(() => {
+  const { resume } = useIntervalFn(
+    () => {
       now.value = new Date()
-    }, 60_000)
-    return () => clearInterval(int)
-  })
+    },
+    60_000,
+    { immediate: false },
+  )
+  onMounted(resume)
 }
 
 // Colors

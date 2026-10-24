@@ -1,5 +1,6 @@
 <script setup vapor lang="ts">
 import { useHead } from '@unhead/vue'
+import { useTimeoutPoll } from '@vueuse/core'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const QUERY_REPO_STARGAZER_COUNT = `
@@ -53,7 +54,8 @@ const loading = ref(false)
 const error = ref<unknown>(null)
 const stargazerCount = ref(0)
 const showRefetch = ref(false)
-let pollTimer: ReturnType<typeof setInterval> | undefined
+const { pause, resume } = useTimeoutPoll(load, 600_000, { immediate: false })
+let mounted = false
 
 const count = computed(() =>
   shouldHumanize.value
@@ -61,24 +63,16 @@ const count = computed(() =>
     : stargazerCount.value.toLocaleString(),
 )
 
-watch(
-  () => props.repo,
-  () => {
-    if (!missingRepo.value) {
-      refetch()
-    }
-  },
-)
+watch(() => props.repo, refetch)
 
 onMounted(() => {
-  if (!missingRepo.value) {
-    startPolling()
-    load()
-  }
+  mounted = true
+  refetch()
 })
 
 onUnmounted(() => {
-  stopPolling()
+  mounted = false
+  pause()
 })
 
 async function load() {
@@ -116,22 +110,11 @@ async function load() {
 }
 
 async function refetch() {
-  stopPolling()
+  pause()
   showRefetch.value = false
+  if (!mounted || missingRepo.value) return
   await load()
-  startPolling()
-}
-
-function startPolling() {
-  stopPolling()
-  pollTimer = setInterval(load, 600_000)
-}
-
-function stopPolling() {
-  if (pollTimer) {
-    clearInterval(pollTimer)
-    pollTimer = undefined
-  }
+  if (mounted && !missingRepo.value) resume()
 }
 
 function humanizeNumber(num: number): string {

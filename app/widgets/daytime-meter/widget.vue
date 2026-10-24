@@ -1,6 +1,7 @@
 <script setup vapor lang="ts">
 import { useHead } from '@unhead/vue'
-import { computed, ref, watchEffect } from 'vue'
+import { useIntervalFn } from '@vueuse/core'
+import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps({
   sun: {
@@ -32,12 +33,14 @@ const angle = computed(() => {
 })
 
 if (import.meta.env.PROD) {
-  watchEffect(onCleanup => {
-    const int = setInterval(() => {
+  const { resume } = useIntervalFn(
+    () => {
       now.value = new Date()
-    }, 60_000)
-    onCleanup(() => clearInterval(int))
-  })
+    },
+    60_000,
+    { immediate: false },
+  )
+  onMounted(resume)
 }
 
 // Colors
