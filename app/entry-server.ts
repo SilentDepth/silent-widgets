@@ -1,33 +1,28 @@
 import { createHead, transformHtmlTemplate } from '@unhead/vue/server'
-import { match } from 'arktype'
 import { createVaporSSRApp as createApp } from 'vue'
 import { renderToString } from 'vue/server-renderer'
+import { createI18n, i18nKey, resolveLanguage } from '@/composables/use-i18n'
+import { parseWidgetInit } from '@/utils/widget-utils'
 import indexHtml from '../index.html?raw'
 import App from './app.vue'
 import assets from './entry-client?assets=client'
-import { fetchResource } from '@/composables/use-i18n'
-import { parseWidgetInit } from '@/utils/widget-utils'
 
 export default {
   fetch: async (req: Request) => {
     console.log('Request:', req.url)
 
     const { name, params, styleProps } = parseWidgetInit(req.url)
-    const lang = match
-      .case({ params: { lang: 'string >= 2' } }, ({ params }) => params.lang)
-      .case(
-        { req: { headers: { 'Accept-Language': 'string >= 2' } } },
-        ({ req }) => req.headers['Accept-Language'],
-      )
-      .default(() => undefined)({ req, params })
-    await fetchResource(name, lang)
+    const i18n = createI18n(resolveLanguage(params.lang ?? req.headers.get('accept-language')))
+    await i18n.fetchResource(name)
 
     const app = createApp(App, { name, params })
+    app.provide(i18nKey, i18n)
 
     const head = createHead({
       init: [
         {
           htmlAttrs: {
+            lang: i18n.lang.value,
             style: Object.entries(styleProps)
               .map(entry => entry.join(':'))
               .join(';'),
@@ -39,13 +34,6 @@ export default {
           ],
           script: [{ type: 'module', src: assets.entry }],
         },
-        lang
-          ? {
-              htmlAttrs: {
-                lang,
-              },
-            }
-          : undefined,
       ],
     })
     app.use(head)
