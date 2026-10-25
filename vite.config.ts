@@ -45,16 +45,16 @@ export default defineConfig({
   environments: {
     client: {
       build: {
-        rolldownOptions: { input: './app/entry-client.ts', devtools: { sessionId: 'client' } },
+        rolldownOptions: { input: './app/entry-client.ts' },
       },
     },
     ssr: {
       build: {
-        rolldownOptions: { input: './app/entry-server.ts', devtools: { sessionId: 'ssr' } },
+        rolldownOptions: { input: './app/entry-server.ts' },
       },
     },
     nitro: {
-      build: { rolldownOptions: { devtools: { sessionId: 'nitro' } } },
+      build: {},
     },
   },
   resolve: {
