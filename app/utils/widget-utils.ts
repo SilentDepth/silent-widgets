@@ -1,4 +1,4 @@
-import { type } from 'arktype'
+import { isMatching, P } from 'ts-pattern'
 
 function normalizeParams(params: Record<string, string>) {
   return Object.fromEntries(
@@ -12,7 +12,7 @@ export function parseWidgetInit(url: string) {
   const params = normalizeParams(Object.fromEntries(urlObj.searchParams.entries()))
 
   const styleProps: Record<string, string> = {}
-  if (type('string > 0').allows(params.bg)) {
+  if (isMatching(P.string.minLength(1), params.bg)) {
     const colors = params.bg.split(',')
     Object.assign(styleProps, {
       '--bg-color': colors[0],
