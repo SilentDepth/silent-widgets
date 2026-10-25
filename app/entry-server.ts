@@ -4,8 +4,8 @@ import { renderToString } from 'vue/server-renderer'
 import { i18nKey, resolveLanguage } from '@/composables/use-i18n'
 import { parseWidgetInit } from '@/utils/widget-utils'
 import { getWidget } from '@/widgets'
-import indexHtml from '../index.html?raw'
 import assets from './entry-client?assets=client'
+import indexHtml from './index.html?raw'
 
 export default {
   fetch: async (req: Request) => {

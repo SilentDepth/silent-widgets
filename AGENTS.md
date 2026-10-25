@@ -4,11 +4,11 @@ This project is based on [Nitro](https://nitro.build) v3, [h3](https://h3.dev/),
 
 ## Project Structure
 
-`app/` is the frontend (SPA/SSR) with `index.html` as entry. `server/` contains server-side code with subdirs: `api/` (/api prefixed handlers), `routes/` (non-prefixed route handlers), `middleware/`, `plugins/`, `utils/`, `assets/`, and `tasks/`. `public/` holds static assets (copied, not bundled). Config files: `vite.config.ts` (loads nitro/vite plugin), `nitro.config.ts` (serverDir, routeRules, preset, etc.), `tsconfig.json` (extends nitro/tsconfig, `~/*` path alias).
+`app/` is the frontend (SPA/SSR) with `app/entry-*.ts` as entries. `server/` contains server-side code with subdirs: `api/` (/api prefixed handlers), `routes/` (non-prefixed route handlers), `middleware/`, `plugins/`, `utils/`, `assets/`, and `tasks/`. `public/` holds static assets (copied, not bundled). Config files: `vite.config.ts` (loads nitro/vite plugin), `nitro.config.ts` (serverDir, routeRules, preset, etc.), `tsconfig.json` (extends nitro/tsconfig, `~/*` path alias).
 
 ## Conventions
 
-- Path alias `~/*` (tsconfig), use explicit `.ts` extensions
+- Path alias `@/*` (tsconfig)
 - Route handlers use `defineHandler()` from `nitro`
 - Route file patterns: `[param]` for dynamic, `[...slug]` for catch-all, `.get.ts`/`.post.ts` for method-specific, `(group)/` ignored in path
 

@@ -3,6 +3,7 @@ import { createVaporSSRApp as createApp } from 'vue'
 import { i18nKey, resolveLanguage } from '@/composables/use-i18n'
 import { parseWidgetInit } from '@/utils/widget-utils'
 import { getWidget } from '@/widgets'
+import '@/assets/styles/main.css'
 
 async function main() {
   const { name, params, styleProps } = parseWidgetInit(location.href)
