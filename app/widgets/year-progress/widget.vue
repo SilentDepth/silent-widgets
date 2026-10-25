@@ -5,13 +5,13 @@ const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 <script setup vapor lang="ts">
 import { useHead } from '@unhead/vue'
 import { useIntervalFn } from '@vueuse/core'
+import { match, P } from 'ts-pattern'
 import { computed, onMounted, ref } from 'vue'
 import useI18n from '@/composables/use-i18n'
 
 const props = defineProps({
   primary: {
     type: String,
-
     default: '#37352f,#ffffffcf',
   },
   secondary: {
@@ -46,6 +46,17 @@ const months = computed(() => {
     days: idx === 1 ? febDays : MONTH_DAYS[idx],
   }))
 })
+const progressDays = computed(() =>
+  months.value.reduce(
+    (days, month) =>
+      days +
+      match(month.num)
+        .with(P.number.lt(nowMonth.value), () => month.days)
+        .with(nowMonth.value, () => nowDate.value)
+        .otherwise(() => 0),
+    0,
+  ),
+)
 
 if (import.meta.env.PROD) {
   const { resume } = useIntervalFn(
@@ -72,30 +83,75 @@ const cssVars = {
 
 <template>
   <div
-    class="h-screen overflow-hidden text-(--primary-color) dark:text-(--primary-color-dark) text-xs leading-none whitespace-nowrap flex items-center space-x-0.5"
+    class="h-screen overflow-hidden flex flex-col justify-center text-(--primary-color) dark:text-(--primary-color-dark) text-xs leading-none whitespace-nowrap"
     :style="cssVars"
   >
     <div
-      v-for="m of months"
-      :key="m.num"
-      :class="`h-1 relative ${m.num < nowMonth ? 'bg-current' : 'bg-(--secondary-color) dark:bg-(--secondary-color-dark)'}`"
-      :style="{ flex: `${m.days} ${m.days} 0` }"
+      class="h-1 relative"
+      :style="{
+        '--total': months[1].days === 29 ? 366 : 365,
+        '--days': progressDays,
+        '--month': nowMonth,
+        '--gap': '2px',
+      }"
     >
-      <template v-if="m.num === nowMonth">
-        <span class="absolute left-0 bottom-full flex flex-col space-y-0.5 mb-1">
-          <span>{{ nowYear }}</span>
-          <strong>{{ t(`month.${m.num}`) }}</strong>
-        </span>
+      <div class="flex absolute inset-0" style="gap: var(--gap)">
         <div
-          class="relative h-full bg-[currentColor]"
-          :style="{ width: (nowDate / m.days) * 100 + '%' }"
+          v-for="m of months"
+          :key="m.num"
+          class="bg-(--secondary-color) dark:bg-(--secondary-color-dark)"
+          :style="{ flex: `${m.days} 0 0` }"
         >
-          <span class="absolute left-0 top-full w-full text-right flex flex-col space-y-0.5 mt-1">
-            <strong>{{ nowDate }}</strong>
-            <span>{{ t(`weekday.${nowWeekday}`) }}</span>
-          </span>
+          <transition
+            appear
+            appear-from-class="opacity-0"
+            appear-active-class="duration-1000 delay-1000 ease-linear"
+          >
+            <div
+              v-if="m.num === nowMonth"
+              class="size-full relative"
+              :style="{ width: `${(nowDate / m.days) * 100}%` }"
+            >
+              <span class="flex flex-col gap-0.5 absolute left-0 bottom-full -translate-y-1">
+                <span>{{ nowYear }}</span>
+                <strong>{{ t(`month.${m.num}`) }}</strong>
+              </span>
+              <span
+                class="flex flex-col gap-0.5 absolute left-0 top-full w-full text-right translate-y-1"
+              >
+                <strong>{{ nowDate }}</strong>
+                <span>{{ t(`weekday.${nowWeekday}`) }}</span>
+              </span>
+            </div>
+          </transition>
         </div>
-      </template>
+      </div>
+      <transition appear appear-active-class="transition duration-2000 ease-cubic-out">
+        <div
+          class="overflow-hidden absolute inset-0 widget-track"
+          :style="{
+            '--w': 'calc(100% - var(--gap) * 11) / var(--total)',
+            '--progress': 'calc(var(--w) * var(--days) + (var(--month) - 1) * var(--gap))',
+            '--offset': 'calc(100% - var(--progress))',
+          }"
+        >
+          <transition appear appear-active-class="transition duration-2000 ease-cubic-out">
+            <div
+              class="flex h-full widget-progress"
+              :style="{
+                gap: 'var(--gap)',
+              }"
+            >
+              <div
+                v-for="m of months"
+                :key="m.num"
+                class="bg-current"
+                :style="{ flex: `${m.days} 0 0` }"
+              />
+            </div>
+          </transition>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -103,4 +159,24 @@ const cssVars = {
 <style>
 @import 'tailwindcss' source(none);
 @source 'widget.vue';
+
+@theme {
+  --ease-cubic-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.widget-track {
+  translate: calc(-1 * var(--offset));
+
+  &.v-enter-from {
+    translate: -100%;
+  }
+}
+
+.widget-progress {
+  translate: var(--offset);
+
+  &.v-enter-from {
+    translate: 100%;
+  }
+}
 </style>
