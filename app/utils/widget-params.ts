@@ -53,10 +53,14 @@ export function parseParam(
       return raw && Number.isNaN(new Date(raw).getTime())
         ? { error: '请输入有效日期，例如 2026-12-31。' }
         : { value: raw }
-    case 'locale':
-      return definition.options?.some(option => option.value === raw)
-        ? { value: raw }
-        : { error: '请选择支持的语言。' }
+    case 'locale': {
+      const normalized = raw.toLowerCase()
+      const option = definition.options?.find(
+        option =>
+          option.value.toLowerCase() === normalized || option.value.split('-')[0] === normalized,
+      )
+      return option ? { value: option.value } : { error: '请选择支持的语言。' }
+    }
     case 'color': {
       if (raw === '' && definition.allowEmpty) return { value: '' }
       const colors = splitColors(raw)

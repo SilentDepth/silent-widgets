@@ -1,18 +1,12 @@
-export const SupportedLang = {
-  enUS: 'en-US',
-  zhCN: 'zh-CN',
-} as const
-export type SupportedLang = ValueOf<typeof SupportedLang>
+import { getWidgetI18n, loadWidgetI18n } from '@/widgets/i18n'
 
+export const SupportedLang = { enUS: 'en-US', zhCN: 'zh-CN' } as const
+export type SupportedLang = ValueOf<typeof SupportedLang>
 const DEFAULT_LANG: SupportedLang = SupportedLang.enUS
-export const i18nKey: InjectionKey<{
-  lang: SupportedLang
-  resource?: JsonObject
-}> = Symbol('i18n')
+export const autoLanguageKey: InjectionKey<SupportedLang> = Symbol('auto-language')
 
 export function resolveLanguage(value: unknown): SupportedLang {
   if (typeof value !== 'string') return DEFAULT_LANG
-
   const preferences = value
     .split(',')
     .map(entry => {
@@ -25,7 +19,6 @@ export function resolveLanguage(value: unknown): SupportedLang {
     })
     .filter(({ quality }) => quality > 0 && quality <= 1)
     .sort((a, b) => b.quality - a.quality)
-
   for (const { language } of preferences) {
     const supported = Object.values(SupportedLang).find(
       lang => lang.toLowerCase() === language || lang.split('-')[0] === language,
@@ -35,18 +28,35 @@ export function resolveLanguage(value: unknown): SupportedLang {
   return DEFAULT_LANG
 }
 
-export default function useI18n() {
-  const i18n = inject(i18nKey)
-  if (!i18n) throw new Error('The app must provide an i18n instance before rendering.')
+export function useWidgetLanguage(requested: () => string) {
+  const automatic = inject(autoLanguageKey, DEFAULT_LANG)
+  return computed(() => (requested() === 'auto' ? automatic : resolveLanguage(requested())))
+}
 
-  const { lang, resource } = i18n
-
-  function t(key: string) {
-    return resource?.[key] || key
-  }
-
-  return {
+export default function useI18n(id: string, requested: () => string) {
+  const lang = useWidgetLanguage(requested)
+  const resource = shallowRef(getWidgetI18n(id, lang.value) ?? {})
+  let revision = 0
+  watch(
     lang,
-    t,
-  }
+    async value => {
+      const current = ++revision
+      const cached = getWidgetI18n(id, value)
+      if (cached) {
+        resource.value = cached
+        return
+      }
+      try {
+        const next = await loadWidgetI18n(id, value)
+        if (current === revision) resource.value = next
+      } catch {
+        if (current === revision) resource.value = getWidgetI18n(id, 'en-US') ?? {}
+      }
+    },
+    { immediate: true },
+  )
+  onScopeDispose(() => {
+    revision++
+  })
+  return { lang, t: (key: string) => resource.value[key] ?? key }
 }

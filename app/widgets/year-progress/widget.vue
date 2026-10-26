@@ -3,36 +3,20 @@ const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 </script>
 
 <script setup vapor lang="ts">
-import { useHead } from '@unhead/vue'
+import '../widget.css'
 import ClientOnly from '@/components/client-only.vue'
 import useI18n from '@/composables/use-i18n'
+import useWidgetStyle from '@/composables/use-widget-style'
+import { widgetProps } from '@/utils/widget-params'
+import { params } from './config'
 
 defineOptions({
   inheritAttrs: false,
 })
 
-const props = defineProps({
-  primary: {
-    type: String,
-    default: '#37352f,#ffffffcf',
-  },
-  secondary: {
-    type: String,
-    default: '#37352f29,#ffffff21',
-  },
-})
+const props = defineProps(widgetProps(params))
 
-useHead({
-  title: 'SILENT YEAR PROGRESS',
-  meta: [
-    { property: 'og:title', content: 'Silent Widgets - Year Progress' },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://widgets.silent.land/year-progress' },
-    { property: 'og:image', content: 'https://widgets.silent.land/covers/year-progress.png' },
-  ],
-})
-
-const { t } = useI18n()
+const { t, lang } = useI18n('year-progress', () => props.lang)
 
 // Date
 
@@ -60,7 +44,7 @@ const progressDays = computed(() =>
   ),
 )
 
-if (import.meta.env.PROD) {
+{
   const { resume } = useIntervalFn(
     () => {
       now.value = new Date()
@@ -71,23 +55,19 @@ if (import.meta.env.PROD) {
   onMounted(resume)
 }
 
-// Colors
-
-const primaryColors = props.primary.split(',')
-const secondaryColors = props.secondary.split(',')
-const cssVars = {
-  '--primary-color': primaryColors[0],
-  '--primary-color-dark': primaryColors[1] || primaryColors[0],
-  '--secondary-color': secondaryColors[0],
-  '--secondary-color-dark': secondaryColors[1] || secondaryColors[0],
-}
+const cssVars = useWidgetStyle(() => ({
+  bg: props.bg,
+  primary: props.primary,
+  secondary: props.secondary,
+}))
 </script>
 
 <template>
   <client-only>
     <div
+      :lang="lang"
       v-bind="$attrs"
-      class="h-screen overflow-hidden flex flex-col justify-center text-(--primary-color) dark:text-(--primary-color-dark) text-xs leading-none whitespace-nowrap"
+      class="silent-widget overflow-hidden flex flex-col justify-center text-(--primary-color) dark:text-(--primary-color-dark) text-xs leading-none whitespace-nowrap"
       :style="cssVars"
     >
       <div
@@ -161,14 +141,7 @@ const cssVars = {
   </client-only>
 </template>
 
-<style>
-@import 'tailwindcss' source(none);
-@source 'page.vue';
-
-@theme {
-  --ease-cubic-out: cubic-bezier(0.215, 0.61, 0.355, 1);
-}
-
+<style scoped>
 .widget-track {
   translate: calc(-1 * var(--offset));
 

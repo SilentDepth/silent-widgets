@@ -1,40 +1,19 @@
 <script setup vapor lang="ts">
-import { useHead } from '@unhead/vue'
+import '../widget.css'
+import ClientOnly from '@/components/client-only.vue'
 import useI18n from '@/composables/use-i18n'
+import useWidgetStyle from '@/composables/use-widget-style'
+import { widgetProps } from '@/utils/widget-params'
+import { params } from './config'
 
 const ERR_NO_DATE = Symbol()
 const ERR_INVALID_DATE = Symbol()
 
-const props = defineProps({
-  date: {
-    type: String,
-    default: '',
-  },
-  event: {
-    type: String,
-    default: '',
-  },
-  primary: {
-    type: String,
-    default: '#37352f,#ffffffcf',
-  },
-  secondary: {
-    type: String,
-    default: '#37352fb2,#ffffffab',
-  },
-})
+defineOptions({ inheritAttrs: false })
 
-useHead({
-  title: 'SILENT DATE COUNTER',
-  meta: [
-    { property: 'og:title', content: 'Silent Widgets - Date Counter' },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://widgets.silent.land/date-counter' },
-    { property: 'og:image', content: 'https://widgets.silent.land/covers/date-counter.png' },
-  ],
-})
+const props = defineProps(widgetProps(params))
 
-const { t } = useI18n()
+const { t, lang } = useI18n('date-counter', () => props.lang)
 
 // Date
 
@@ -71,7 +50,7 @@ const diffLabel = computed(() => {
 })
 const unit = computed(() => (diff.value === 1 ? t('unit.day') : t('unit.day.plural')))
 
-if (import.meta.env.PROD) {
+{
   const { resume } = useIntervalFn(
     () => {
       now.value = new Date()
@@ -82,48 +61,44 @@ if (import.meta.env.PROD) {
   onMounted(resume)
 }
 
-// Colors
-
-const primaryColors = props.primary.split(',')
-const secondaryColors = props.secondary.split(',')
-const cssVars = {
-  '--primary-color': primaryColors[0],
-  '--primary-color-dark': primaryColors[1] || primaryColors[0],
-  '--secondary-color': secondaryColors[0],
-  '--secondary-color-dark': secondaryColors[1] || secondaryColors[0],
-}
+const cssVars = useWidgetStyle(() => ({
+  bg: props.bg,
+  primary: props.primary,
+  secondary: props.secondary,
+}))
 </script>
 
 <template>
-  <div
-    class="widget h-screen overflow-hidden grid place-content-center place-items-center"
-    :style="cssVars"
-  >
-    <div v-if="error">{{ error }}</div>
-    <template v-else>
-      <div v-if="event" class="mb-1 font-medium">{{ event }}</div>
-      <div class="relative whitespace-nowrap">
-        <span
-          class="diff absolute top-0 right-full mt-1 mr-1 block leading-none text-sm font-medium"
-        >
-          {{ diffLabel }}
-        </span>
-        <span class="leading-none text-4xl font-medium">{{ diffValue }}</span>
-        <span
-          v-if="Boolean(diff)"
-          class="unit absolute bottom-0 left-full mb-1 ml-1 block leading-none px-1 py-0.5 text-sm font-medium"
-        >
-          {{ unit }}
-        </span>
-      </div>
-    </template>
-  </div>
+  <client-only>
+    <div
+      v-bind="$attrs"
+      :lang="lang"
+      class="silent-widget widget overflow-hidden grid place-content-center place-items-center"
+      :style="cssVars"
+    >
+      <div v-if="error">{{ error }}</div>
+      <template v-else>
+        <div v-if="event" class="mb-1 font-medium">{{ event }}</div>
+        <div class="relative whitespace-nowrap">
+          <span
+            class="diff absolute top-0 right-full mt-1 mr-1 block leading-none text-sm font-medium"
+          >
+            {{ diffLabel }}
+          </span>
+          <span class="leading-none text-4xl font-medium">{{ diffValue }}</span>
+          <span
+            v-if="Boolean(diff)"
+            class="unit absolute bottom-0 left-full mb-1 ml-1 block leading-none px-1 py-0.5 text-sm font-medium"
+          >
+            {{ unit }}
+          </span>
+        </div>
+      </template>
+    </div>
+  </client-only>
 </template>
 
-<style>
-@import 'tailwindcss' source(none);
-@source 'page.vue';
-
+<style scoped>
 .widget {
   color: var(--primary-color);
   background: var(--bg-color);

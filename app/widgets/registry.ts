@@ -1,7 +1,7 @@
 import type { WidgetConfig } from '@/types/widget'
 
 const configs = import.meta.glob<WidgetConfig>('./*/config.ts', { eager: true })
-const components = import.meta.glob<{ default: VaporComponent }>('../pages/*/page.vue')
+const components = import.meta.glob<{ default: VaporComponent }>('./*/widget.vue')
 
 export const widgets = [
   'year-progress',
@@ -19,7 +19,7 @@ export function findWidget(id: string) {
 }
 
 export async function loadWidget(id: string) {
-  const loader = components[`../pages/${id}/page.vue`]
+  const loader = components[`./${id}/widget.vue`]
   if (!loader) throw new Error('Widget not found')
   return (await loader()).default
 }

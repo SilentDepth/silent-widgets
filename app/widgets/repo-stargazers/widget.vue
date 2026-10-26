@@ -1,5 +1,9 @@
 <script setup vapor lang="ts">
-import { useHead } from '@unhead/vue'
+import '../widget.css'
+import { useWidgetLanguage } from '@/composables/use-i18n'
+import useWidgetStyle from '@/composables/use-widget-style'
+import { widgetProps } from '@/utils/widget-params'
+import { params } from './config'
 
 const QUERY_REPO_STARGAZER_COUNT = `
   query ($owner: String!, $name: String!) {
@@ -9,34 +13,10 @@ const QUERY_REPO_STARGAZER_COUNT = `
   }
 `
 
-const props = defineProps({
-  repo: {
-    type: String,
-    default: '',
-  },
-  humanize: {
-    type: [Boolean, String],
-    default: false,
-  },
-  primary: {
-    type: String,
-    default: '',
-  },
-  star: {
-    type: String,
-    default: '#fbbf24,#d97706',
-  },
-})
+defineOptions({ inheritAttrs: false })
 
-useHead({
-  title: 'SILENT REPO STARGAZERS',
-  meta: [
-    { property: 'og:title', content: 'Silent Widgets - Repo Stargazers' },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://widgets.silent.land/repo-stargazers' },
-    { property: 'og:image', content: 'https://widgets.silent.land/covers/repo-stargazers.png' },
-  ],
-})
+const props = defineProps(widgetProps(params))
+const lang = useWidgetLanguage(() => props.lang)
 
 // Core state
 
@@ -44,78 +24,94 @@ const parts = computed(() => props.repo.split('/'))
 const owner = computed(() => parts.value[0] || '???')
 const name = computed(() => parts.value[1] || '???')
 const missingRepo = computed(() => typeof props.repo !== 'string' || !props.repo)
-const originPath = computed(() => `${location.origin}${location.pathname}?`)
-const shouldHumanize = computed(
-  () => props.humanize === true || props.humanize === '' || props.humanize === 'true',
-)
+const shouldHumanize = computed(() => props.humanize)
 const loading = ref(false)
 const error = ref<unknown>(null)
 const stargazerCount = ref(0)
 const showRefetch = ref(false)
-const { pause, resume } = useTimeoutPoll(load, 600_000, { immediate: false })
 let mounted = false
+let revision = 0
+let activeRequest: AbortController | undefined
+let refreshTimer: ReturnType<typeof setTimeout> | undefined
 
 const count = computed(() =>
   shouldHumanize.value
     ? humanizeNumber(stargazerCount.value)
-    : stargazerCount.value.toLocaleString(),
+    : stargazerCount.value.toLocaleString(lang.value),
 )
 
-watch(() => props.repo, refetch)
+function cancelPending() {
+  revision++
+  clearTimeout(refreshTimer)
+  activeRequest?.abort()
+}
 
+function scheduleRefresh(delay: number) {
+  cancelPending()
+  error.value = null
+  showRefetch.value = false
+  stargazerCount.value = 0
+  loading.value = mounted && !missingRepo.value
+  if (loading.value)
+    refreshTimer = setTimeout(() => {
+      void load()
+    }, delay)
+}
+
+watch(
+  () => props.repo,
+  () => scheduleRefresh(300),
+)
 onMounted(() => {
   mounted = true
-  refetch()
+  scheduleRefresh(0)
 })
-
 onUnmounted(() => {
   mounted = false
-  pause()
+  cancelPending()
 })
 
 async function load() {
+  if (!mounted || missingRepo.value) return
+  const current = ++revision
+  const controller = new AbortController()
+  activeRequest = controller
   loading.value = true
   error.value = null
-
   try {
-    // if (import.meta.env.DEV) {
-    //   stargazerCount.value = 2039
-    //   return
-    // }
-
     const response = await fetch('/api/github', {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
+      signal: controller.signal,
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         query: QUERY_REPO_STARGAZER_COUNT,
         variables: { owner: owner.value, name: name.value },
       }),
     })
     const payload = await response.json()
-
-    if (!response.ok || payload.errors) {
+    if (!response.ok || payload.errors)
       throw new Error(payload.errors?.[0]?.message || 'Failed to fetch stargazer count')
-    }
-
-    stargazerCount.value = payload.data.repository.stargazerCount
+    const value = payload.data?.repository?.stargazerCount
+    if (!Number.isFinite(value) || value < 0) throw new Error('Invalid stargazer count')
+    if (current === revision) stargazerCount.value = value
   } catch (err) {
-    error.value = err
+    if (current === revision && !controller.signal.aborted) error.value = err
   } finally {
-    loading.value = false
+    if (current === revision && mounted) {
+      loading.value = false
+      refreshTimer = setTimeout(() => {
+        void load()
+      }, 600_000)
+    }
   }
 }
 
-async function refetch() {
-  pause()
-  showRefetch.value = false
-  if (!mounted || missingRepo.value) return
-  await load()
-  if (mounted && !missingRepo.value) resume()
+function refetch() {
+  scheduleRefresh(0)
 }
 
 function humanizeNumber(num: number): string {
+  if (num < 1000) return String(num)
   const units = [
     { label: 'B', scale: 1e9 },
     { label: 'M', scale: 1e6 },
@@ -126,32 +122,24 @@ function humanizeNumber(num: number): string {
   return Math.floor(num / unit.scale) + unit.label
 }
 
-// Colors
-
-const primaryColors = props.primary ? props.primary.split(',') : null
-const starColors = props.star.split(',')
-const cssVars = {
-  ...(primaryColors
-    ? {
-        '--primary-color': primaryColors[0],
-        '--primary-color-dark': primaryColors[1] || primaryColors[0],
-      }
-    : {}),
-  '--star-color': starColors[0],
-  '--star-color-dark': starColors[1] || starColors[0],
-}
+const cssVars = useWidgetStyle(() => ({ bg: props.bg, primary: props.primary, star: props.star }))
 </script>
 
 <template>
-  <div class="frame h-screen overflow-hidden grid place-content-center" :style="cssVars">
+  <div
+    v-bind="$attrs"
+    :lang="lang"
+    class="silent-widget frame overflow-hidden grid place-content-center"
+    :style="cssVars"
+  >
     <div class="flex flex-col items-center">
       <div v-if="missingRepo" class="text-sm whitespace-nowrap relative">
-        <span class="absolute right-full">{{ originPath }}</span>
+        <span>请设置 GitHub 仓库：</span>
         <span class="px-0.5">
           <span
             class="px-0.5 text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/50 rounded-[3px]"
           >
-            repo=???
+            owner/name
           </span>
         </span>
       </div>
@@ -222,10 +210,8 @@ const cssVars = {
   </div>
 </template>
 
-<style>
-@import 'tailwindcss' source(none);
-@source 'page.vue';
-
+<style scoped>
+@reference '../../assets/styles/main.css';
 .frame {
   color: var(--primary-color);
   background: var(--bg-color);
