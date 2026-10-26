@@ -32,6 +32,7 @@ const dates = computed(() =>
   }),
 )
 const firstDateColStart = computed(() => ((dates.value[0].day - props.weekstart + 7) % 7) + 1)
+const rowCount = computed(() => 1 + Math.ceil((firstDateColStart.value - 1 + maxDate.value) / 7))
 
 {
   const { resume } = useIntervalFn(
@@ -57,10 +58,10 @@ const cssVars = useWidgetStyle(() => ({
       v-bind="$attrs"
       :lang="lang"
       class="silent-widget root overflow-hidden grid place-content-center"
-      :style="cssVars"
+      :style="{ ...cssVars, '--row-count': rowCount }"
     >
       <div class="widget grid place-items-center">
-        <div class="month col-span-6 justify-self-start">{{ t(`month.${nowMonth}`) }}</div>
+        <div class="month col-span-full justify-self-start">{{ t(`month.${nowMonth}`) }}</div>
         <div
           v-for="d of dates"
           :key="d.date"
@@ -86,7 +87,7 @@ const cssVars = useWidgetStyle(() => ({
 .root {
   --widget-width: calc(100cqw - 2px);
   --widget-height: calc(100cqh - 2px);
-  --cell-size: min(calc(var(--widget-width) / 7), calc(var(--widget-height) / 6));
+  --cell-size: min(calc(var(--widget-width) / 7), calc(var(--widget-height) / var(--row-count)));
   --dot-size: clamp(6px, calc(var(--cell-size) / 3.3), 9999px);
 
   background: var(--bg-color);
@@ -101,7 +102,7 @@ const cssVars = useWidgetStyle(() => ({
 .widget {
   font-size: clamp(12px, calc(var(--cell-size) / 1.7), 9999px);
   grid-template-columns: repeat(7, var(--cell-size));
-  grid-template-rows: repeat(6, var(--cell-size));
+  grid-template-rows: repeat(var(--row-count), var(--cell-size));
 }
 
 .month {

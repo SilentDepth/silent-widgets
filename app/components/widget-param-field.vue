@@ -12,6 +12,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 const colors = computed(() => splitColors(props.modelValue))
+const hasExtraColors = computed(() => colors.value.length > (props.definition.darkVariant ? 2 : 1))
 const hasDark = computed(() => Boolean(colors.value[1]))
 const id = computed(() => `param-${props.name}`)
 const descriptionId = computed(
@@ -74,6 +75,15 @@ function pickerColor(value = '') {
           {{ option.label }}
         </option>
       </UiSelect>
+      <UiInput
+        v-else-if="definition.type === 'color' && hasExtraColors"
+        :id="id"
+        :model-value="modelValue"
+        :aria-describedby="descriptionId"
+        :aria-invalid="Boolean(error)"
+        spellcheck="false"
+        @update:model-value="update"
+      />
       <template v-else-if="definition.type === 'color'">
         <div class="color-input">
           <UiInput
