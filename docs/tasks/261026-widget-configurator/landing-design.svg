@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1512" height="1512" viewBox="0 0 1512 1512" role="img" aria-labelledby="title desc">
+<title id="title">Silent Widgets landing page 设计稿</title>
+<desc id="desc">接近 Notion 文档页的工具目录，左侧桌面布局，右侧手机布局；仅展示静态工具信息。</desc>
+<defs>
+<symbol id="brand" viewBox="0 0 24 24"><g stroke="currentColor" stroke-width="1.65"><rect x="2" y="2" width="8" height="8" rx="1.6" fill="none"/><rect x="14" y="2" width="8" height="8" rx="1.6" fill="none"/><rect x="2" y="14" width="8" height="8" rx="1.6" fill="none"/><rect x="14" y="14" width="8" height="8" rx="1.6" fill="currentColor"/></g></symbol>
+<symbol id="progress" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2.5" y="7" width="19" height="10" rx="2"/><path d="M7 10v4m4-4v4m4-4v4"/></g></symbol>
+<symbol id="calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v5m8-5v5"/></g><g fill="currentColor"><circle cx="8" cy="13" r="1"/><circle cx="12" cy="13" r="1"/><circle cx="16" cy="13" r="1"/><circle cx="8" cy="17" r="1"/><circle cx="12" cy="17" r="1"/><circle cx="16" cy="17" r="1"/></g></symbol>
+<symbol id="date" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M7 21h10M8 3v4l4 5-4 5v4m8-18v4l-4 5 4 5v4"/></g></symbol>
+<symbol id="day" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5V12"/></g><circle cx="20.1" cy="9.3" r="3" fill="#FFFFFF" stroke="currentColor" stroke-width="1.5"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="m12 2.5 2.9 6 6.6 1-4.8 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5L2.5 9.5l6.6-1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+<symbol id="embed" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5m8-10 5 5-5 5M14 4l-4 16"/></g></symbol>
+</defs>
+<g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+<rect x="0" y="0" width="1512" height="1512" rx="0" fill="#EFEFEC" stroke="none"/>
+<text x="24" y="37" font-size="14" fill="#73726E" font-weight="500" >Landing page / 桌面</text>
+<text x="1056" y="37" font-size="14" fill="#73726E" font-weight="500" >Landing page / 手机</text>
+<rect x="24" y="64" width="1000" height="1040" rx="8" fill="#FFFFFF" stroke="#DDDDD8"/>
+<rect x="1056" y="64" width="432" height="1040" rx="8" fill="#FFFFFF" stroke="#DDDDD8"/>
+<use href="#brand" x="48" y="83" width="19" height="19" color="#37352F"/>
+<text x="77" y="99" font-size="14" fill="#37352F" font-weight="500" >Silent Widgets</text>
+<text x="992" y="99" font-size="13" fill="#73726E" font-weight="400" text-anchor="end">使用说明</text>
+<path d="M24 120h1000" stroke="#E9E9E7"/>
+<use href="#brand" x="164" y="167" width="43" height="43" color="#37352F"/>
+<text x="164" y="264" font-size="40" fill="#37352F" font-weight="700" letter-spacing="-1.1">Silent Widgets</text>
+<text x="164" y="302" font-size="17" fill="#37352F" font-weight="400" >给 Notion 页面添加日历、进度和计数。</text>
+<rect x="164" y="328" width="720" height="56" rx="5" fill="#F7F7F5" stroke="none"/>
+<use href="#embed" x="183" y="344" width="22" height="22" color="#73726E"/>
+<text x="219" y="362" font-size="15" fill="#37352F" font-weight="400" >选择小工具，调整参数，再把地址嵌入 Notion。</text>
+<text x="164" y="438" font-size="19" fill="#37352F" font-weight="600" >小工具</text>
+<text x="884" y="438" font-size="13" fill="#73726E" font-weight="400" text-anchor="end">5 个</text>
+<path d="M164 457h720" stroke="#E9E9E7"/>
+<use href="#progress" x="171" y="483" width="25" height="25" color="#73726E"/>
+<text x="212" y="487" font-size="16" fill="#37352F" font-weight="600" >一年进度</text>
+<text x="212" y="509" font-size="12" fill="#73726E" font-weight="400" >Year progress</text>
+<text x="414" y="498" font-size="14" fill="#73726E" font-weight="400" >查看今年已经过去多少。</text>
+<rect x="828" y="480" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="856" y="501" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<path d="M164 533h720" stroke="#E9E9E7"/>
+<use href="#calendar" x="171" y="559" width="25" height="25" color="#73726E"/>
+<text x="212" y="563" font-size="16" fill="#37352F" font-weight="600" >迷你日历</text>
+<text x="212" y="585" font-size="12" fill="#73726E" font-weight="400" >Mini calendar</text>
+<text x="414" y="574" font-size="14" fill="#73726E" font-weight="400" >用紧凑的点阵查看本月日期。</text>
+<rect x="828" y="556" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="856" y="577" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<path d="M164 609h720" stroke="#E9E9E7"/>
+<use href="#date" x="171" y="635" width="25" height="25" color="#73726E"/>
+<text x="212" y="639" font-size="16" fill="#37352F" font-weight="600" >日期计数</text>
+<text x="212" y="661" font-size="12" fill="#73726E" font-weight="400" >Date counter</text>
+<text x="414" y="650" font-size="14" fill="#73726E" font-weight="400" >记录距离某一天还有或已过的天数。</text>
+<rect x="828" y="632" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="856" y="653" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<path d="M164 685h720" stroke="#E9E9E7"/>
+<use href="#day" x="171" y="711" width="25" height="25" color="#73726E"/>
+<text x="212" y="715" font-size="16" fill="#37352F" font-weight="600" >一天进度</text>
+<text x="212" y="737" font-size="12" fill="#73726E" font-weight="400" >Daytime meter</text>
+<text x="414" y="726" font-size="14" fill="#73726E" font-weight="400" >用圆环显示一天的时间进度。</text>
+<rect x="828" y="708" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="856" y="729" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<path d="M164 761h720" stroke="#E9E9E7"/>
+<use href="#star" x="171" y="787" width="25" height="25" color="#73726E"/>
+<text x="212" y="791" font-size="16" fill="#37352F" font-weight="600" >仓库星标</text>
+<text x="212" y="813" font-size="12" fill="#73726E" font-weight="400" >Repo stargazers</text>
+<text x="414" y="802" font-size="14" fill="#73726E" font-weight="400" >显示 GitHub 仓库的 Star 数量。</text>
+<rect x="828" y="784" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="856" y="805" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<path d="M164 837h720" stroke="#E9E9E7"/>
+<text x="164" y="898" font-size="19" fill="#37352F" font-weight="600" >放进 Notion</text>
+<rect x="164" y="923" width="22" height="22" rx="4" fill="#F7F7F5" stroke="none"/>
+<text x="175" y="939" font-size="12" fill="#73726E" font-weight="500" text-anchor="middle">1</text>
+<text x="195" y="939" font-size="14" fill="#37352F" font-weight="600" >选择小工具</text>
+<text x="164" y="970" font-size="13" fill="#73726E" font-weight="400" >找到适合你的页面的工具。</text>
+<rect x="410" y="923" width="22" height="22" rx="4" fill="#F7F7F5" stroke="none"/>
+<text x="421" y="939" font-size="12" fill="#73726E" font-weight="500" text-anchor="middle">2</text>
+<text x="441" y="939" font-size="14" fill="#37352F" font-weight="600" >调整并复制</text>
+<text x="410" y="970" font-size="13" fill="#73726E" font-weight="400" >设置参数，复制最终地址。</text>
+<rect x="656" y="923" width="22" height="22" rx="4" fill="#F7F7F5" stroke="none"/>
+<text x="667" y="939" font-size="12" fill="#73726E" font-weight="500" text-anchor="middle">3</text>
+<text x="687" y="939" font-size="14" fill="#37352F" font-weight="600" >添加嵌入块</text>
+<text x="656" y="970" font-size="13" fill="#73726E" font-weight="400" >在 Notion 中粘贴地址。</text>
+<path d="M164 1003h720" stroke="#E9E9E7"/>
+<text x="164" y="1035" font-size="13" fill="#73726E" font-weight="400" >让工具安静地待在你的页面里。</text>
+<text x="884" y="1035" font-size="13" fill="#2383E2" font-weight="400" text-anchor="end">Notion 嵌入说明</text>
+<use href="#brand" x="1076" y="83" width="19" height="19" color="#37352F"/>
+<text x="1105" y="99" font-size="14" fill="#37352F" font-weight="500" >Silent Widgets</text>
+<text x="1468" y="99" font-size="13" fill="#73726E" font-weight="400" text-anchor="end">使用说明</text>
+<path d="M1056 120h432" stroke="#E9E9E7"/>
+<use href="#brand" x="1080" y="163" width="36" height="36" color="#37352F"/>
+<text x="1080" y="249" font-size="32" fill="#37352F" font-weight="700" letter-spacing="-0.8">Silent Widgets</text>
+<text x="1080" y="281" font-size="16" fill="#37352F" font-weight="400" >给 Notion 页面添加日历、</text>
+<text x="1080" y="307" font-size="16" fill="#37352F" font-weight="400" >进度和计数。</text>
+<rect x="1080" y="333" width="384" height="72" rx="5" fill="#F7F7F5" stroke="none"/>
+<use href="#embed" x="1094" y="350" width="20" height="20" color="#73726E"/>
+<text x="1127" y="359" font-size="14" fill="#37352F" font-weight="400" >选择小工具，调整参数，</text>
+<text x="1127" y="382" font-size="14" fill="#37352F" font-weight="400" >再把地址嵌入 Notion。</text>
+<text x="1080" y="451" font-size="18" fill="#37352F" font-weight="600" >小工具</text>
+<text x="1464" y="451" font-size="13" fill="#73726E" font-weight="400" text-anchor="end">5 个</text>
+<path d="M1080 469h384" stroke="#E9E9E7"/>
+<use href="#progress" x="1082" y="489" width="23" height="23" color="#73726E"/>
+<text x="1119" y="500" font-size="16" fill="#37352F" font-weight="600" >一年进度</text>
+<rect x="1408" y="480" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="1436" y="501" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<text x="1119" y="529" font-size="14" fill="#73726E" font-weight="400" >查看今年已经过去多少。</text>
+<path d="M1080 557h384" stroke="#E9E9E7"/>
+<use href="#calendar" x="1082" y="577" width="23" height="23" color="#73726E"/>
+<text x="1119" y="588" font-size="16" fill="#37352F" font-weight="600" >迷你日历</text>
+<rect x="1408" y="568" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="1436" y="589" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<text x="1119" y="617" font-size="14" fill="#73726E" font-weight="400" >用紧凑的点阵查看本月日期。</text>
+<path d="M1080 645h384" stroke="#E9E9E7"/>
+<use href="#date" x="1082" y="665" width="23" height="23" color="#73726E"/>
+<text x="1119" y="676" font-size="16" fill="#37352F" font-weight="600" >日期计数</text>
+<rect x="1408" y="656" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="1436" y="677" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<text x="1119" y="705" font-size="14" fill="#73726E" font-weight="400" >记录距离某一天还有或已过的天数。</text>
+<path d="M1080 733h384" stroke="#E9E9E7"/>
+<use href="#day" x="1082" y="753" width="23" height="23" color="#73726E"/>
+<text x="1119" y="764" font-size="16" fill="#37352F" font-weight="600" >一天进度</text>
+<rect x="1408" y="744" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="1436" y="765" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<text x="1119" y="793" font-size="14" fill="#73726E" font-weight="400" >用圆环显示一天的时间进度。</text>
+<path d="M1080 821h384" stroke="#E9E9E7"/>
+<use href="#star" x="1082" y="841" width="23" height="23" color="#73726E"/>
+<text x="1119" y="852" font-size="16" fill="#37352F" font-weight="600" >仓库星标</text>
+<rect x="1408" y="832" width="56" height="32" rx="5" fill="#F7F7F5" stroke="#E9E9E7"/>
+<text x="1436" y="853" font-size="14" fill="#37352F" font-weight="500" text-anchor="middle">配置</text>
+<text x="1119" y="881" font-size="14" fill="#73726E" font-weight="400" >显示 GitHub 仓库的 Star 数量。</text>
+<path d="M1080 909h384" stroke="#E9E9E7"/>
+<text x="1080" y="958" font-size="18" fill="#37352F" font-weight="600" >放进 Notion</text>
+<text x="1080" y="991" font-size="14" fill="#37352F" font-weight="400" >1. 选择小工具</text>
+<text x="1080" y="1019" font-size="14" fill="#37352F" font-weight="400" >2. 调整参数并复制地址</text>
+<text x="1080" y="1047" font-size="14" fill="#37352F" font-weight="400" >3. 在 Notion 中添加嵌入块并粘贴地址</text>
+<text x="1080" y="1080" font-size="13" fill="#2383E2" font-weight="400" >Notion 嵌入说明</text>
+<text x="24" y="1135" font-size="12" fill="#73726E" font-weight="400" >静态设计稿 · 首页不挂载 widget · 2026-10-26</text>
+<text x="24" y="1200" font-size="20" fill="#37352F" font-weight="600">颜色与排版</text>
+<text x="1056" y="1200" font-size="14" fill="#73726E">系统无衬线字体，左对齐，文档式目录。</text>
+<text x="24" y="1240" font-size="14" fill="#73726E">canvas</text>
+<rect x="24" y="1256" width="224" height="36" rx="4" fill="#FFFFFF" stroke="#DDDDD8"/>
+<text x="24" y="1316" font-size="13" fill="#73726E">#FFFFFF</text>
+<rect x="24" y="1340" width="224" height="36" rx="4" fill="#191919" stroke="#DDDDD8"/>
+<text x="24" y="1400" font-size="13" fill="#73726E">#191919</text>
+<text x="272" y="1240" font-size="14" fill="#73726E">surface</text>
+<rect x="272" y="1256" width="224" height="36" rx="4" fill="#F7F7F5" stroke="#DDDDD8"/>
+<text x="272" y="1316" font-size="13" fill="#73726E">#F7F7F5</text>
+<rect x="272" y="1340" width="224" height="36" rx="4" fill="#232323" stroke="#DDDDD8"/>
+<text x="272" y="1400" font-size="13" fill="#73726E">#232323</text>
+<text x="520" y="1240" font-size="14" fill="#73726E">text</text>
+<rect x="520" y="1256" width="224" height="36" rx="4" fill="#37352F" stroke="#DDDDD8"/>
+<text x="520" y="1316" font-size="13" fill="#73726E">#37352F</text>
+<rect x="520" y="1340" width="224" height="36" rx="4" fill="#EBEBE9" stroke="#DDDDD8"/>
+<text x="520" y="1400" font-size="13" fill="#73726E">#EBEBE9</text>
+<text x="768" y="1240" font-size="14" fill="#73726E">muted</text>
+<rect x="768" y="1256" width="224" height="36" rx="4" fill="#73726E" stroke="#DDDDD8"/>
+<text x="768" y="1316" font-size="13" fill="#73726E">#73726E</text>
+<rect x="768" y="1340" width="224" height="36" rx="4" fill="#AAAAA5" stroke="#DDDDD8"/>
+<text x="768" y="1400" font-size="13" fill="#73726E">#AAAAA5</text>
+<text x="1016" y="1240" font-size="14" fill="#73726E">line</text>
+<rect x="1016" y="1256" width="224" height="36" rx="4" fill="#E9E9E7" stroke="#DDDDD8"/>
+<text x="1016" y="1316" font-size="13" fill="#73726E">#E9E9E7</text>
+<rect x="1016" y="1340" width="224" height="36" rx="4" fill="#363633" stroke="#DDDDD8"/>
+<text x="1016" y="1400" font-size="13" fill="#73726E">#363633</text>
+<text x="1264" y="1240" font-size="14" fill="#73726E">accent</text>
+<rect x="1264" y="1256" width="224" height="36" rx="4" fill="#2383E2" stroke="#DDDDD8"/>
+<text x="1264" y="1316" font-size="13" fill="#73726E">#2383E2</text>
+<rect x="1264" y="1340" width="224" height="36" rx="4" fill="#6CB6FF" stroke="#DDDDD8"/>
+<text x="1264" y="1400" font-size="13" fill="#73726E">#6CB6FF</text>
+<text x="24" y="1450" font-size="14" fill="#73726E">桌面标题 40 / 48 px · 手机标题 32 / 40 px · 正文 16 / 26 px · 内容最大宽度 720 px</text>
+<text x="24" y="1482" font-size="13" fill="#73726E">上排为浅色模式，下排为深色模式；页面按系统偏好切换。</text>
+</g>
+</svg>
+
