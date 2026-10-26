@@ -1,6 +1,4 @@
 <script setup vapor lang="ts">
-import { onMounted, shallowRef } from 'vue'
-
 const isMounted = shallowRef(false)
 
 onMounted(() => {

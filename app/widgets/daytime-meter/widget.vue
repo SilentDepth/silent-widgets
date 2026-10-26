@@ -1,7 +1,5 @@
 <script setup vapor lang="ts">
 import { useHead } from '@unhead/vue'
-import { useIntervalFn } from '@vueuse/core'
-import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps({
   sun: {

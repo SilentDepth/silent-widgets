@@ -1,7 +1,5 @@
 <script setup vapor lang="ts">
 import { useHead } from '@unhead/vue'
-import { useTimeoutPoll } from '@vueuse/core'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const QUERY_REPO_STARGAZER_COUNT = `
   query ($owner: String!, $name: String!) {

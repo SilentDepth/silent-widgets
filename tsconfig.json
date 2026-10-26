@@ -7,6 +7,12 @@
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./app/*"]
-    }
+    },
+
+    "plugins": [
+      {
+        "name": "@dxup/unimport}"
+      }
+    ]
   }
 }

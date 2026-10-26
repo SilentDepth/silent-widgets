@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { nitro } from 'nitro/vite'
+import autoImport from 'unplugin-auto-import/vite'
 import { defineConfig } from 'vite-plus'
 
 export default defineConfig({
@@ -37,7 +38,20 @@ export default defineConfig({
   },
   lint: { options: { typeAware: true, typeCheck: true } },
 
-  plugins: [nitro(), vue(), tailwindcss()],
+  plugins: [
+    autoImport({
+      imports: [
+        'vue',
+        '@vueuse/core',
+        { from: 'vue', imports: ['VaporComponent'], type: true },
+        { from: 'ts-pattern', imports: ['match', 'isMatching', 'P'] },
+        { from: 'type-fest', imports: ['JsonObject', 'ValueOf'], type: true },
+      ],
+    }),
+    nitro(),
+    vue(),
+    tailwindcss(),
+  ],
   devtools: {
     enabled: true,
     apply: 'serve',
@@ -52,9 +66,6 @@ export default defineConfig({
       build: {
         rolldownOptions: { input: './app/entry-server.ts' },
       },
-    },
-    nitro: {
-      build: {},
     },
   },
   resolve: {

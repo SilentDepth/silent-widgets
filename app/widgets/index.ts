@@ -1,6 +1,3 @@
-import type { JsonObject } from 'type-fest'
-import type { VaporComponent } from 'vue'
-
 const widgets = import.meta.glob<{ default: VaporComponent }>('./*/widget.vue')
 const i18nResources = import.meta.glob<{ default: JsonObject }>('./*/i18n/*.json')
 

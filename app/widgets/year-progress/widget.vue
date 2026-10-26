@@ -4,9 +4,6 @@ const MONTH_DAYS = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 <script setup vapor lang="ts">
 import { useHead } from '@unhead/vue'
-import { useIntervalFn } from '@vueuse/core'
-import { match, P } from 'ts-pattern'
-import { computed, onMounted, ref } from 'vue'
 import ClientOnly from '@/components/client-only.vue'
 import useI18n from '@/composables/use-i18n'
 

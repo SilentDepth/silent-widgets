@@ -1,6 +1,3 @@
-import type { JsonObject, ValueOf } from 'type-fest'
-import { inject, type InjectionKey } from 'vue'
-
 export const SupportedLang = {
   enUS: 'en-US',
   zhCN: 'zh-CN',
