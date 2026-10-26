@@ -1,6 +1,12 @@
 import type { SupportedLang } from '@/composables/use-i18n'
 import { prepareWidget, resolveWidgetRoute } from '@/utils/widget-utils'
 
+export type LoadedPage = NonNullable<Awaited<ReturnType<typeof loadPage>>>
+export interface PageView {
+  page: LoadedPage
+  revision: number
+}
+
 export async function loadPage(url: URL, automatic: SupportedLang) {
   const route = resolveWidgetRoute(url.pathname)
   if (!route) return null

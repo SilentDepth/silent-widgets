@@ -3,6 +3,7 @@ import type { PropType } from 'vue'
 import UiInput from '@/components/ui/input.vue'
 import UiSelect from '@/components/ui/select.vue'
 import WidgetParamField from '@/components/widget-param-field.vue'
+import { usePageNavigation } from '@/composables/use-page-navigation'
 import type { WidgetValue } from '@/types/widget'
 import { parseWidgetParams, serializeParam, serializeWidgetParams } from '@/utils/widget-params'
 import { widgets } from '@/widgets/registry'
@@ -16,6 +17,7 @@ const props = defineProps({
   origin: { type: String, required: true },
 })
 const definitions = props.widget.params
+const { navigate, replaceUrl, isNavigating } = usePageNavigation()
 const initial = parseWidgetParams(definitions, props.raw)
 const draft = reactive(
   Object.fromEntries(
@@ -51,7 +53,7 @@ watch(
     if (mounted && !hasErrors.value) {
       const url = new URL(finalUrl.value)
       url.pathname += '/config'
-      history.replaceState(history.state, '', url)
+      replaceUrl(url)
     }
   },
   { immediate: true },
@@ -62,7 +64,7 @@ onMounted(() => {
 onUnmounted(() => clearTimeout(statusTimer))
 
 function selectWidget(id: string) {
-  location.assign(`/${id}/config`)
+  navigate(`/${id}/config`)
 }
 async function copyUrl() {
   if (hasErrors.value) return
@@ -94,6 +96,7 @@ function selectAddress(event: FocusEvent) {
           class="widget-select mt-5"
           aria-label="选择小工具"
           :model-value="widget.id"
+          :disabled="isNavigating"
           @update:model-value="selectWidget"
         >
           <option v-for="item of widgets" :key="item.id" :value="item.id">
@@ -112,7 +115,7 @@ function selectAddress(event: FocusEvent) {
         <button
           type="button"
           class="copy-button absolute top-2 right-2"
-          :disabled="hasErrors"
+          :disabled="hasErrors || isNavigating"
           aria-describedby="copy-status"
           @click="copyUrl"
         >
@@ -146,7 +149,12 @@ function selectAddress(event: FocusEvent) {
         readonly
         @focus="selectAddress"
       />
-      <form class="parameter-list mt-4" aria-label="小工具参数" @submit.prevent="copyUrl">
+      <form
+        class="parameter-list mt-4"
+        aria-label="小工具参数"
+        :inert="isNavigating"
+        @submit.prevent="copyUrl"
+      >
         <WidgetParamField
           v-for="(definition, name) of definitions"
           :key="name"

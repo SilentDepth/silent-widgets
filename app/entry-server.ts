@@ -2,6 +2,7 @@ import { createHead, transformHtmlTemplate } from '@unhead/vue/server'
 import { createVaporSSRApp as createApp } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import { autoLanguageKey, resolveLanguage } from '@/composables/use-i18n'
+import App from './app.vue'
 import assets from './entry-client?assets=client'
 import indexHtml from './index.html?raw'
 import { loadPage } from './routes'
@@ -14,14 +15,11 @@ export default {
     const page = await loadPage(url, automatic)
     if (!page) return new Response('Widget not found', { status: 404 })
 
-    const app = createApp(page.component, page.props)
+    const app = createApp(App, { view: { page, revision: 0 } })
     app.provide(autoLanguageKey, automatic)
     const head = createHead({
       init: [
         {
-          htmlAttrs: { lang: page.lang },
-          title: page.title,
-          meta: page.meta,
           link: assets.css.map((attrs: { href: string }) => ({ rel: 'stylesheet', ...attrs })),
           script: [{ type: 'module', src: assets.entry }],
         },
