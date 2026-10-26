@@ -43,6 +43,8 @@ export type WidgetParams<T extends WidgetParamDefinitions> = {
 }
 export type WidgetProps<T extends WidgetParamDefinitions> = {
   [K in keyof T]: { type: PropType<InferParam<T[K]>>; default: InferParam<T[K]> }
+} & {
+  noAnimation: { type: BooleanConstructor; default: false }
 }
 
 export interface WidgetMeta {

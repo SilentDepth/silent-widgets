@@ -107,7 +107,7 @@ function selectAddress(event: FocusEvent) {
         aria-label="小工具预览"
       >
         <div class="absolute inset-0" style="container-type: size">
-          <component :is="component" v-bind="values" class="size-full" />
+          <component :is="component" v-bind="values" :no-animation="true" class="size-full" />
         </div>
         <button
           type="button"

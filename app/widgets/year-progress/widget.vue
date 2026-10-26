@@ -87,7 +87,8 @@ const cssVars = useWidgetStyle(() => ({
             :style="{ flex: `${m.days} 0 0` }"
           >
             <transition
-              appear
+              :appear="!noAnimation"
+              :css="!noAnimation"
               appear-from-class="opacity-0"
               appear-active-class="duration-1000 delay-1000 ease-linear"
             >
@@ -110,7 +111,11 @@ const cssVars = useWidgetStyle(() => ({
             </transition>
           </div>
         </div>
-        <transition appear appear-active-class="transition duration-2000 ease-cubic-out">
+        <transition
+          :appear="!noAnimation"
+          :css="!noAnimation"
+          appear-active-class="transition duration-2000 ease-cubic-out"
+        >
           <div
             class="overflow-hidden absolute inset-0 widget-track"
             :style="{
@@ -119,7 +124,11 @@ const cssVars = useWidgetStyle(() => ({
               '--offset': 'calc(100% - var(--progress))',
             }"
           >
-            <transition appear appear-active-class="transition duration-2000 ease-cubic-out">
+            <transition
+              :appear="!noAnimation"
+              :css="!noAnimation"
+              appear-active-class="transition duration-2000 ease-cubic-out"
+            >
               <div
                 class="flex h-full widget-progress"
                 :style="{

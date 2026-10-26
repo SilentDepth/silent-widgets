@@ -120,14 +120,22 @@ export function serializeWidgetParams(
 }
 
 export function widgetProps<T extends WidgetParamDefinitions>(definitions: T): WidgetProps<T> {
-  return Object.fromEntries(
-    Object.entries(definitions).map(([name, definition]) => [
-      name,
-      {
-        type:
-          definition.type === 'boolean' ? Boolean : definition.type === 'integer' ? Number : String,
-        default: definition.default,
-      },
-    ]),
-  ) as WidgetProps<T>
+  return {
+    ...Object.fromEntries(
+      Object.entries(definitions).map(([name, definition]) => [
+        name,
+        {
+          type:
+            definition.type === 'boolean'
+              ? Boolean
+              : definition.type === 'integer'
+                ? Number
+                : String,
+          default: definition.default,
+        },
+      ]),
+    ),
+    // Internal preview control; excluded from URL parameters and form definitions.
+    noAnimation: { type: Boolean, default: false },
+  } as WidgetProps<T>
 }
