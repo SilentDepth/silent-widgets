@@ -1,6 +1,6 @@
 <script setup vapor lang="ts">
 import '../widget.css'
-import { useWidgetLanguage } from '@/composables/use-i18n'
+import useI18n from '@/composables/use-i18n'
 import useWidgetStyle from '@/composables/use-widget-style'
 import { widgetProps } from '@/utils/widget-params'
 import { params } from './config'
@@ -16,7 +16,7 @@ const QUERY_REPO_STARGAZER_COUNT = `
 defineOptions({ inheritAttrs: false })
 
 const props = defineProps(widgetProps(params))
-const lang = useWidgetLanguage(() => props.lang)
+const { lang, t } = useI18n('repo-stargazers', () => props.lang)
 
 // Core state
 
@@ -133,8 +133,8 @@ const cssVars = useWidgetStyle(() => ({ bg: props.bg, primary: props.primary, st
     :style="cssVars"
   >
     <div class="flex flex-col items-center">
-      <div v-if="missingRepo" class="text-sm whitespace-nowrap relative">
-        <span>请设置 GitHub 仓库：</span>
+      <div v-if="missingRepo" class="text-sm text-center px-3 relative">
+        <span>{{ t('error.no_repo') }}</span>
         <span class="px-0.5">
           <span
             class="px-0.5 text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/50 rounded-[3px]"
@@ -146,7 +146,16 @@ const cssVars = useWidgetStyle(() => ({ bg: props.bg, primary: props.primary, st
       <template v-else>
         <div class="text-sm leading-none">{{ owner }}</div>
         <div class="mt-0.5 text-sm leading-none font-bold">{{ name }}</div>
-        <div
+        <button
+          type="button"
+          :disabled="loading"
+          :aria-label="
+            loading
+              ? t('status.loading')
+              : error
+                ? t('status.error')
+                : `${t('status.stars')}: ${count}. ${t('action.refresh')}`
+          "
           class="badge mt-1 px-2 py-1 rounded-[3px] grid grid-cols-[auto_auto] place-items-center gap-x-1"
           :class="[
             loading ? 'loading' : error ? 'error' : null,
@@ -154,7 +163,7 @@ const cssVars = useWidgetStyle(() => ({ bg: props.bg, primary: props.primary, st
           ]"
           @mouseenter="!loading && !error && (showRefetch = true)"
           @mouseleave="showRefetch = false"
-          @click="showRefetch && refetch()"
+          @click="refetch"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -204,7 +213,7 @@ const cssVars = useWidgetStyle(() => ({ bg: props.bg, primary: props.primary, st
               d="M5.463 4.433A9.961 9.961 0 0 1 12 2c5.523 0 10 4.477 10 10 0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228l-.997-1.795zm13.074 15.134A9.961 9.961 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772l.997 1.795z"
             />
           </svg>
-        </div>
+        </button>
       </template>
     </div>
   </div>

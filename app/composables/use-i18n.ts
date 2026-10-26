@@ -21,7 +21,7 @@ export function resolveLanguage(value: unknown): SupportedLang {
     .sort((a, b) => b.quality - a.quality)
   for (const { language } of preferences) {
     const supported = Object.values(SupportedLang).find(
-      lang => lang.toLowerCase() === language || lang.split('-')[0] === language,
+      lang => lang.toLowerCase() === language || lang.split('-')[0] === language.split('-')[0],
     )
     if (supported) return supported
   }

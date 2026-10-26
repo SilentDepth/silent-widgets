@@ -1,3 +1,5 @@
+import { defineText, localize } from '@/i18n/text'
+import type { LocalizedText } from '@/i18n/text'
 import type {
   ParamResult,
   WidgetParam,
@@ -29,29 +31,47 @@ export function parseParam(
 ): ParamResult<WidgetValue> {
   if (raw === undefined) {
     return definition.required && definition.default === ''
-      ? { error: `请填写${definition.label}。` }
+      ? {
+          error: defineText(
+            `请填写${localize(definition.label, 'zh-CN')}。`,
+            `Enter a value for ${localize(definition.label, 'en-US')}.`,
+          ),
+        }
       : { value: definition.default }
   }
-  if (definition.required && !raw.trim()) return { error: `请填写${definition.label}。` }
+  if (definition.required && !raw.trim())
+    return {
+      error: defineText(
+        `请填写${localize(definition.label, 'zh-CN')}。`,
+        `Enter a value for ${localize(definition.label, 'en-US')}.`,
+      ),
+    }
   if (definition.parse) return definition.parse(raw)
 
   switch (definition.type) {
     case 'boolean':
       if (raw === '' || raw === 'true') return { value: true }
       if (raw === 'false') return { value: false }
-      return { error: '请输入 true 或 false。' }
+      return { error: defineText('请输入 true 或 false。', 'Enter true or false.') }
     case 'integer': {
-      if (!/^[+-]?\d+$/.test(raw.trim())) return { error: '请输入整数。' }
+      if (!/^[+-]?\d+$/.test(raw.trim()))
+        return { error: defineText('请输入整数。', 'Enter a whole number.') }
       const value = Number(raw)
-      if (!Number.isSafeInteger(value)) return { error: '请输入有效整数。' }
+      if (!Number.isSafeInteger(value))
+        return { error: defineText('请输入有效整数。', 'Enter a valid whole number.') }
       if (definition.options && !definition.options.some(option => option.value === value)) {
-        return { error: '请选择列表中的值。' }
+        return { error: defineText('请选择列表中的值。', 'Choose a value from the list.') }
       }
       return { value }
     }
     case 'date':
       return raw && Number.isNaN(new Date(raw).getTime())
-        ? { error: '请输入有效日期，例如 2026-12-31。' }
+        ? {
+            error: defineText(
+              '请输入有效日期，例如 2026-12-31。',
+              'Enter a valid date, such as 2026-12-31.',
+            ),
+          }
         : { value: raw }
     case 'locale': {
       const normalized = raw.toLowerCase()
@@ -59,7 +79,9 @@ export function parseParam(
         option =>
           option.value.toLowerCase() === normalized || option.value.split('-')[0] === normalized,
       )
-      return option ? { value: option.value } : { error: '请选择支持的语言。' }
+      return option
+        ? { value: option.value }
+        : { error: defineText('请选择支持的语言。', 'Choose a supported language.') }
     }
     case 'color': {
       if (raw === '' && definition.allowEmpty) return { value: '' }
@@ -67,8 +89,11 @@ export function parseParam(
       if (!colors[0] || colors.length > (definition.darkVariant ? 2 : 1)) {
         return {
           error: definition.darkVariant
-            ? '请输入一种颜色，或用逗号分隔浅色和深色值。'
-            : '请输入一种颜色。',
+            ? defineText(
+                '请输入一种颜色，或用逗号分隔浅色和深色值。',
+                'Enter one color, or separate light and dark colors with a comma.',
+              )
+            : defineText('请输入一种颜色。', 'Enter one color.'),
         }
       }
       return { value: colors.filter(Boolean).join(',') }
@@ -84,7 +109,7 @@ export function parseWidgetParams<T extends WidgetParamDefinitions>(
 ) {
   const input = raw instanceof URLSearchParams ? Object.fromEntries(raw) : raw
   const values: Record<string, WidgetValue> = {}
-  const errors: Record<string, string> = {}
+  const errors: Record<string, LocalizedText> = {}
   for (const [name, definition] of Object.entries(definitions)) {
     const result = parseParam(definition, input[name])
     values[name] = result.error === undefined ? result.value : definition.default
@@ -103,7 +128,7 @@ export function serializeParam(definition: WidgetParam, value: WidgetValue): str
   if (definition.type !== 'boolean' && definition.type !== 'integer' && typeof value === 'string') {
     return definition.serialize?.(value) ?? value
   }
-  throw new TypeError(`Invalid value for ${definition.label}`)
+  throw new TypeError(`Invalid value for ${localize(definition.label, 'en-US')}`)
 }
 
 export function serializeWidgetParams(

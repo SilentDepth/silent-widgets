@@ -1,74 +1,78 @@
 <script setup vapor lang="ts">
 import WidgetIcon from '@/components/widget-icon.vue'
+import { useSiteI18n } from '@/composables/use-site-i18n'
 import { widgets } from '@/widgets/registry'
+
+const { l, t } = useSiteI18n()
 </script>
 
 <template>
   <div class="directory-page">
     <header class="site-header">
       <a href="/" class="brand">Silent Widgets</a>
-      <a href="#embed" class="help-link">使用说明 <span aria-hidden="true">↗</span></a>
+      <a href="#embed" class="help-link">{{ t('home.help') }} <span aria-hidden="true">↗</span></a>
     </header>
     <main>
       <section class="intro" aria-labelledby="page-title">
         <WidgetIcon name="blocks" class="page-icon" />
         <h1 id="page-title">Silent Widgets</h1>
-        <p class="tagline">给 Notion 页面添加日历、进度和计数。</p>
+        <p class="tagline">{{ t('home.tagline') }}</p>
         <p class="callout">
           <span aria-hidden="true" class="callout-arrow">↳</span>
-          <span>选择小工具，调整参数，再把地址嵌入 Notion。</span>
+          <span>{{ t('home.callout') }}</span>
         </p>
       </section>
       <section class="catalog" aria-labelledby="catalog-title">
         <div class="section-heading">
-          <h2 id="catalog-title">小工具</h2>
-          <span>{{ widgets.length }} 个</span>
+          <h2 id="catalog-title">{{ t('home.widgets') }}</h2>
+          <span>{{ t('home.count', { count: widgets.length }) }}</span>
         </div>
         <ul class="widget-list">
           <li v-for="widget of widgets" :key="widget.id">
             <a :href="`/${widget.id}/config`" class="widget-link">
               <WidgetIcon :name="widget.meta.icon" class="widget-icon" />
               <div class="widget-name">
-                <h3>{{ widget.meta.name }}</h3>
-                <span>{{ widget.meta.englishName }}</span>
+                <h3>{{ l(widget.meta.name) }}</h3>
               </div>
-              <p class="widget-description">{{ widget.meta.description }}</p>
-              <span class="configure">配置 <span aria-hidden="true">→</span></span>
+              <p class="widget-description">{{ l(widget.meta.description) }}</p>
+              <span class="configure"
+                >{{ t('home.configure') }} <span aria-hidden="true">→</span></span
+              >
             </a>
           </li>
         </ul>
       </section>
       <section id="embed" class="embed-guide" aria-labelledby="embed-title">
-        <h2 id="embed-title">放进 Notion</h2>
+        <h2 id="embed-title">{{ t('home.embed') }}</h2>
         <ol class="steps">
           <li>
             <span class="step-number" aria-hidden="true">1</span>
             <div>
-              <h3>选择小工具</h3>
-              <p>从上方目录找到需要的工具。</p>
+              <h3>{{ t('home.step1.title') }}</h3>
+              <p>{{ t('home.step1.body') }}</p>
             </div>
           </li>
           <li>
             <span class="step-number" aria-hidden="true">2</span>
             <div>
-              <h3>调整并复制</h3>
-              <p>预览效果，点击“复制地址”。</p>
+              <h3>{{ t('home.step2.title') }}</h3>
+              <p>{{ t('home.step2.body') }}</p>
             </div>
           </li>
           <li>
             <span class="step-number" aria-hidden="true">3</span>
             <div>
-              <h3>添加嵌入块</h3>
-              <p>在 Notion 输入 <code>/embed</code>，<br class="desktop-break" />粘贴地址。</p>
+              <h3>{{ t('home.step3.title') }}</h3>
+              <p>{{ t('home.step3.body', { command: '/embed' }) }}</p>
             </div>
           </li>
         </ol>
         <a class="notion-help" href="https://www.notion.com/help/embed-and-connect-other-apps">
-          查看 Notion 嵌入说明 <span aria-hidden="true">↗</span>
+          {{ t('home.notionHelp') }} <span aria-hidden="true">↗</span>
         </a>
       </section>
     </main>
-    <footer>Silent Widgets <span aria-hidden="true">·</span> 简单的小工具，放在你的页面里。</footer>
+    <footer>Silent Widgets <span aria-hidden="true">·</span> {{ t('home.footer') }}</footer>
   </div>
 </template>
 
@@ -97,7 +101,6 @@ import { widgets } from '@/widgets/registry'
 }
 .help-link,
 .section-heading > span,
-.widget-name > span,
 .widget-description,
 .steps p,
 footer {
@@ -178,12 +181,6 @@ h2,
   width: 24px;
   height: 24px;
 }
-.widget-name > span {
-  display: block;
-  margin-top: 2px;
-  font-size: 12px;
-  line-height: 18px;
-}
 .widget-description {
   font-size: 14px;
   line-height: 22px;
@@ -238,9 +235,6 @@ a:focus-visible {
   margin-top: 6px;
   font-size: 13px;
   line-height: 22px;
-}
-.steps code {
-  font-size: 12px;
 }
 .notion-help {
   display: inline-flex;
@@ -320,9 +314,6 @@ footer > span {
   }
   .steps p {
     margin-top: 2px;
-  }
-  .desktop-break {
-    display: none;
   }
   footer {
     margin-top: 24px;

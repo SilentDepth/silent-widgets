@@ -1,4 +1,6 @@
 <script setup vapor lang="ts">
+import { useSiteI18n } from '@/composables/use-site-i18n'
+import type { LocalizedText } from '@/i18n/text'
 import type { WidgetParam } from '@/types/widget'
 import { splitColors } from '@/utils/widget-params'
 import UiInput from './ui/input.vue'
@@ -8,9 +10,10 @@ const props = defineProps<{
   name: string
   definition: WidgetParam
   modelValue: string
-  error?: string
+  error?: LocalizedText
 }>()
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+const { l, t } = useSiteI18n()
 const colors = computed(() => splitColors(props.modelValue))
 const hasExtraColors = computed(() => colors.value.length > (props.definition.darkVariant ? 2 : 1))
 const hasDark = computed(() => Boolean(colors.value[1]))
@@ -48,10 +51,10 @@ function pickerColor(value = '') {
 <template>
   <div class="param-field">
     <div class="field-heading">
-      <label :for="id">{{ definition.label }}</label>
+      <label :for="id">{{ l(definition.label) }}</label>
       <code>{{ name }}</code>
     </div>
-    <p :id="`${id}-description`" class="description">{{ definition.description }}</p>
+    <p :id="`${id}-description`" class="description">{{ l(definition.description) }}</p>
     <div class="field-control">
       <UiInput
         v-if="definition.type === 'boolean'"
@@ -72,7 +75,7 @@ function pickerColor(value = '') {
         @update:model-value="update"
       >
         <option v-for="option of definition.options" :key="option.value" :value="option.value">
-          {{ option.label }}
+          {{ l(option.label) }}
         </option>
       </UiSelect>
       <UiInput
@@ -88,7 +91,7 @@ function pickerColor(value = '') {
         <div class="color-input">
           <UiInput
             type="color"
-            :aria-label="`${definition.label}浅色色板`"
+            :aria-label="t('field.lightPicker', { label: l(definition.label) })"
             :model-value="pickerColor(colors[0])"
             @update:model-value="setColor(0, $event)"
           />
@@ -97,29 +100,26 @@ function pickerColor(value = '') {
             :model-value="colors[0]"
             :aria-describedby="descriptionId"
             :aria-invalid="Boolean(error)"
-            :placeholder="definition.allowEmpty ? '默认颜色' : '#ffffff'"
+            :placeholder="definition.allowEmpty ? t('field.defaultColor') : '#ffffff'"
             spellcheck="false"
             @update:model-value="setColor(0, $event)"
           />
         </div>
         <template v-if="definition.darkVariant">
           <label class="inherit-color"
-            ><UiInput
-              type="checkbox"
-              :model-value="!hasDark"
-              @update:model-value="toggleDark"
-            />深色模式沿用浅色</label
+            ><UiInput type="checkbox" :model-value="!hasDark" @update:model-value="toggleDark" />
+            {{ t('field.inheritColor') }}</label
           >
           <div v-if="hasDark" class="color-input">
             <UiInput
               type="color"
-              :aria-label="`${definition.label}深色色板`"
+              :aria-label="t('field.darkPicker', { label: l(definition.label) })"
               :model-value="pickerColor(colors[1])"
               @update:model-value="setColor(1, $event)"
             />
             <UiInput
               :model-value="colors[1]"
-              :aria-label="`${definition.label}深色值`"
+              :aria-label="t('field.darkValue', { label: l(definition.label) })"
               :aria-describedby="descriptionId"
               :aria-invalid="Boolean(error)"
               spellcheck="false"
@@ -132,14 +132,14 @@ function pickerColor(value = '') {
         v-else
         :id="id"
         :model-value="modelValue"
-        :placeholder="definition.placeholder"
+        :placeholder="l(definition.placeholder)"
         :aria-required="definition.required"
         :aria-describedby="descriptionId"
         :aria-invalid="Boolean(error)"
         :inputmode="definition.type === 'integer' ? 'numeric' : undefined"
         @update:model-value="update"
       />
-      <p v-if="error" :id="`${id}-error`" class="field-error">{{ error }}</p>
+      <p v-if="error" :id="`${id}-error`" class="field-error">{{ l(error) }}</p>
     </div>
   </div>
 </template>

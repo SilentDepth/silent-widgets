@@ -1,4 +1,6 @@
+import { resolveLanguage } from '@/composables/use-i18n'
 import type { SupportedLang } from '@/composables/use-i18n'
+import { defineText, localize } from '@/i18n/text'
 import { prepareWidget, resolveWidgetRoute } from '@/utils/widget-utils'
 
 export type LoadedPage = NonNullable<Awaited<ReturnType<typeof loadPage>>>
@@ -15,7 +17,7 @@ export async function loadPage(url: URL, automatic: SupportedLang) {
       component: (await import('./pages/index/page.vue')).default,
       props: {},
       title: 'Silent Widgets',
-      lang: 'zh-CN',
+      lang: automatic,
       meta: [],
     }
   }
@@ -26,18 +28,20 @@ export async function loadPage(url: URL, automatic: SupportedLang) {
       ? (await import('./pages/widget/page.vue')).default
       : (await import('./pages/configurator/page.vue')).default
   const { widget } = route
+  const lang =
+    route.kind === 'config' || prepared.values.lang === 'auto'
+      ? automatic
+      : resolveLanguage(prepared.values.lang)
+  const name = localize(widget.meta.name, lang)
+  const title =
+    route.kind === 'config' ? localize(defineText(`${name}配置`, `Configure ${name}`), lang) : name
   return {
     component,
     props: { ...prepared, origin: url.origin },
-    title: route.kind === 'widget' ? widget.meta.title : `${widget.meta.name}配置 · Silent Widgets`,
-    lang:
-      route.kind === 'config'
-        ? 'zh-CN'
-        : prepared.values.lang === 'auto'
-          ? automatic
-          : String(prepared.values.lang),
+    title: `${title} · Silent Widgets`,
+    lang,
     meta: [
-      { property: 'og:title', content: `Silent Widgets - ${widget.meta.englishName}` },
+      { property: 'og:title', content: `${title} · Silent Widgets` },
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: new URL(`/${widget.id}`, url.origin).href },
       { property: 'og:image', content: new URL(widget.meta.cover, url.origin).href },

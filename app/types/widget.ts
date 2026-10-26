@@ -1,21 +1,22 @@
 import type { PropType } from 'vue'
+import type { LocalizedText } from '@/i18n/text'
 
 export type WidgetValue = string | number | boolean
-export type ParamResult<T> = { value: T; error?: never } | { error: string; value?: never }
+export type ParamResult<T> = { value: T; error?: never } | { error: LocalizedText; value?: never }
 
 interface ParamBase<T> {
   default: T
-  label: string
-  description: string
+  label: LocalizedText
+  description: LocalizedText
   required?: boolean
-  placeholder?: string
+  placeholder?: LocalizedText
   parse?: (raw: string) => ParamResult<T>
   serialize?: (value: T) => string
 }
 
 interface ParamOption<T> {
   value: T
-  label: string
+  label: LocalizedText
 }
 
 export type WidgetParam =
@@ -48,11 +49,9 @@ export type WidgetProps<T extends WidgetParamDefinitions> = {
 }
 
 export interface WidgetMeta {
-  name: string
-  englishName: string
-  description: string
+  name: LocalizedText
+  description: LocalizedText
   icon: 'progress' | 'calendar' | 'date' | 'day' | 'star'
-  title: string
   cover: string
 }
 

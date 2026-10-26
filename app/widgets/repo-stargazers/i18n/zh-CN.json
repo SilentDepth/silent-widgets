@@ -1,0 +1,7 @@
+{
+  "error.no_repo": "请设置 GitHub 仓库：",
+  "status.loading": "正在加载星标数量",
+  "status.error": "无法加载星标数量，请重试。",
+  "status.stars": "星标数量",
+  "action.refresh": "刷新星标数量"
+}

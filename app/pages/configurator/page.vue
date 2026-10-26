@@ -4,6 +4,7 @@ import UiInput from '@/components/ui/input.vue'
 import UiSelect from '@/components/ui/select.vue'
 import WidgetParamField from '@/components/widget-param-field.vue'
 import { usePageNavigation } from '@/composables/use-page-navigation'
+import { useSiteI18n } from '@/composables/use-site-i18n'
 import type { WidgetValue } from '@/types/widget'
 import { parseWidgetParams, serializeParam, serializeWidgetParams } from '@/utils/widget-params'
 import { widgets } from '@/widgets/registry'
@@ -16,6 +17,7 @@ const props = defineProps({
   raw: { type: Object as PropType<Record<string, string>>, required: true },
   origin: { type: String, required: true },
 })
+const { l, t } = useSiteI18n()
 const definitions = props.widget.params
 const { navigate, replaceUrl, isNavigating } = usePageNavigation()
 const initial = parseWidgetParams(definitions, props.raw)
@@ -37,7 +39,7 @@ const finalUrl = computed(() => {
   url.search = serializeWidgetParams(definitions, values).toString()
   return url.href
 })
-const copyStatus = ref('')
+const copyStatus = ref<'idle' | 'copied' | 'failed'>('idle')
 const manualCopy = ref(false)
 let mounted = false
 let statusTimer: ReturnType<typeof setTimeout> | undefined
@@ -48,7 +50,7 @@ watch(
     for (const name of Object.keys(definitions)) {
       if (!result.errors[name]) values[name] = result.values[name]
     }
-    copyStatus.value = ''
+    copyStatus.value = 'idle'
     manualCopy.value = false
     if (mounted && !hasErrors.value) {
       const url = new URL(finalUrl.value)
@@ -71,13 +73,13 @@ async function copyUrl() {
   clearTimeout(statusTimer)
   try {
     await navigator.clipboard.writeText(finalUrl.value)
-    copyStatus.value = '已复制'
+    copyStatus.value = 'copied'
     manualCopy.value = false
     statusTimer = setTimeout(() => {
-      copyStatus.value = ''
+      copyStatus.value = 'idle'
     }, 2500)
   } catch {
-    copyStatus.value = '无法自动复制，请选中下方地址手动复制。'
+    copyStatus.value = 'failed'
     manualCopy.value = true
   }
 }
@@ -88,33 +90,26 @@ function selectAddress(event: FocusEvent) {
 
 <template>
   <main class="px-4 pb-12">
-    <div class="max-w-xl mx-auto">
-      <header class="py-8">
+    <div class="config-content max-w-xl mx-auto">
+      <header class="pt-8 pb-5">
         <a href="/" class="brand-link">Silent Widgets</a>
-        <h1 class="sr-only">{{ widget.meta.name }}配置</h1>
+        <h1 class="sr-only">{{ t('config.title', { widget: l(widget.meta.name) }) }}</h1>
+      </header>
+      <div class="widget-toolbar">
         <UiSelect
-          class="widget-select mt-5"
-          aria-label="选择小工具"
+          class="widget-select"
+          :aria-label="t('config.select')"
           :model-value="widget.id"
           :disabled="isNavigating"
           @update:model-value="selectWidget"
         >
           <option v-for="item of widgets" :key="item.id" :value="item.id">
-            {{ item.meta.name }} / {{ item.meta.englishName }}
+            {{ l(item.meta.name) }}
           </option>
         </UiSelect>
-        <p class="widget-description mt-2">{{ widget.meta.description }}</p>
-      </header>
-      <section
-        class="preview aspect-og rounded-md overflow-hidden relative"
-        aria-label="小工具预览"
-      >
-        <div class="absolute inset-0" style="container-type: size">
-          <component :is="component" v-bind="values" :no-animation="true" class="size-full" />
-        </div>
         <button
           type="button"
-          class="copy-button absolute top-2 right-2"
+          class="copy-button"
           :disabled="hasErrors || isNavigating"
           aria-describedby="copy-status"
           @click="copyUrl"
@@ -131,27 +126,39 @@ function selectAddress(event: FocusEvent) {
             <rect x="8" y="8" width="12" height="13" rx="3" />
             <path d="M16 8V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h2" />
           </svg>
-          {{ copyStatus === '已复制' ? '已复制' : '复制地址' }}
+          {{ t(copyStatus === 'copied' ? 'config.copied' : 'config.copy') }}
         </button>
+      </div>
+      <p class="widget-description">{{ l(widget.meta.description) }}</p>
+      <section class="preview rounded-md overflow-hidden" :aria-label="t('config.preview')">
+        <div class="absolute inset-0" style="container-type: size">
+          <component :is="component" v-bind="values" :no-animation="true" class="size-full" />
+        </div>
       </section>
       <p id="copy-status" class="copy-status mt-2" role="status" aria-live="polite">
         {{
           hasErrors
-            ? '请先修正下方参数，再复制地址。'
-            : copyStatus || '调整参数即可更新预览，复制地址后可嵌入 Notion。'
+            ? t('config.fixErrors')
+            : t(
+                copyStatus === 'failed'
+                  ? 'config.copyFailed'
+                  : copyStatus === 'copied'
+                    ? 'config.copied'
+                    : 'config.hint',
+              )
         }}
       </p>
       <UiInput
         v-if="manualCopy"
         class="mt-2"
-        aria-label="嵌入地址"
+        :aria-label="t('config.link')"
         :model-value="finalUrl"
         readonly
         @focus="selectAddress"
       />
       <form
         class="parameter-list mt-4"
-        aria-label="小工具参数"
+        :aria-label="t('config.parameters')"
         :inert="isNavigating"
         @submit.prevent="copyUrl"
       >
@@ -164,39 +171,68 @@ function selectAddress(event: FocusEvent) {
           :error="parsed.errors[name]"
         />
       </form>
-      <p class="embed-help mt-5">在 Notion 中添加嵌入块，粘贴复制的地址。</p>
+      <p class="embed-help mt-5">{{ t('config.embedHelp') }}</p>
     </div>
   </main>
 </template>
 
 <style scoped>
+.config-content {
+  container-type: inline-size;
+  --toolbar-height: 56px;
+  --preview-height: min(52.5cqw, 40dvh);
+}
+.widget-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--toolbar-height);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--ui-canvas);
+}
 .brand-link {
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
 }
 .widget-select {
-  font-size: 20px;
+  flex: 1;
+  height: 40px;
+  font-size: 18px;
   font-weight: 600;
   border-color: transparent;
   padding-left: 0;
+  padding-block: 0;
 }
 .widget-description,
 .embed-help {
   color: var(--ui-muted);
   font-size: 14px;
 }
+.widget-description {
+  margin: 4px 0 20px;
+}
 .preview {
-  box-shadow:
-    0 0 0 1px var(--ui-line),
-    0 3px 12px #00000008;
+  position: sticky;
+  top: var(--toolbar-height);
+  z-index: 10;
+  height: var(--preview-height);
+  background: var(--ui-canvas);
+}
+:deep(input),
+:deep(select) {
+  scroll-margin-top: calc(var(--toolbar-height) + var(--preview-height) + 16px);
 }
 .copy-button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 36px;
+  flex-shrink: 0;
+  min-height: 40px;
+  white-space: nowrap;
   padding: 7px 10px;
   border: 1px solid var(--ui-line);
   border-radius: 5px;

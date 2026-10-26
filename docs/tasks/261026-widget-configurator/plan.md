@@ -48,7 +48,7 @@
 
 说明文字与参数规则共同保存在 `config.ts`，暂不分离。依赖方向应保证 widget 不导入配置器 UI。配置器和 widget 仍处于同一工程，不承诺无关页面的构建哈希永远不变。
 
-本轮新增界面采用简体中文文案，名称旁可保留英文名称。widget 继续保留现有 `en-US`、`zh-CN` 和自动语言选择能力。界面跟随系统明暗模式。
+首页和配置器支持 `en-US`、`zh-CN`，跟随请求头中的语言偏好，并保留 SSR 解析结果用于客户端导航。widget 选单只显示当前界面语言的名称。widget 的 `lang` 参数单独控制预览内容。界面跟随系统明暗模式。
 
 #### 2. 已核实的现状
 
@@ -121,20 +121,25 @@ widget 专属的样式、数据常量和 i18n 随本体迁移。共享代码留�
 每个 `config.ts` 导出 `params` 和 `meta`。参数定义采用对象键作为参数名。下面展示迷你日历的 `weekstart` 条目：
 
 ```ts
+import { defineText } from '@/i18n/text'
+
 export const params = {
   weekstart: {
     type: 'integer',
     default: 0,
-    label: '每周起始日',
-    description: '选择日历每一周从哪一天开始。',
+    label: defineText('每周起始日', 'Week starts on'),
+    description: defineText(
+      '选择日历每一周从哪一天开始。',
+      'Choose the first day of each calendar week.',
+    ),
     options: [
-      { value: 0, label: '星期日' },
-      { value: 1, label: '星期一' },
-      { value: 2, label: '星期二' },
-      { value: 3, label: '星期三' },
-      { value: 4, label: '星期四' },
-      { value: 5, label: '星期五' },
-      { value: 6, label: '星期六' },
+      { value: 0, label: defineText('星期日', 'Sunday') },
+      { value: 1, label: defineText('星期一', 'Monday') },
+      { value: 2, label: defineText('星期二', 'Tuesday') },
+      { value: 3, label: defineText('星期三', 'Wednesday') },
+      { value: 4, label: defineText('星期四', 'Thursday') },
+      { value: 5, label: defineText('星期五', 'Friday') },
+      { value: 6, label: defineText('星期六', 'Saturday') },
     ],
   },
 } as const satisfies Record<string, WidgetParam>
@@ -206,11 +211,11 @@ widget props             配置器提示
 
 仓库星标的空 `primary` 表示采用 widget 内置基础颜色。应保留这个语义，不能将空值当作非法布尔值。公共 CSS 基础色迁入各 widget 可用的局部样式规则，避免依赖配置器页面的文字色或背景色。
 
-`meta` 包含中文名称、英文名称、简介、静态图标标识、SEO 标题和封面路径。`meta` 不导入 `.vue` 组件或表单 UI。首页使用静态图标，不实例化 widget。日期、仓库等输入使用 placeholder 提示，不把示例值写成默认值。
+`meta` 包含双语名称、双语简介、静态图标标识和封面路径。页面标题由名称和页面类型生成。参数标签、说明、选项及校验提示使用 `LocalizedText`，通过 `defineText(中文, 英文)` 定义双语文本；颜色和日期等语言无关的值可直接使用字符串。`meta` 不导入 `.vue` 组件或表单 UI。首页使用静态图标，不实例化 widget。日期、仓库等输入使用 placeholder 提示，不把示例值写成默认值。
 
 #### 6. 尺寸、样式、语言与更新
 
-独立展示页提供全屏区域，配置器提供预览区域。两者的布局元素都声明 `container-type: size`，并提供不依赖 widget 内容的宽高。默认配置器预览比例沿用现有 `1200 / 630`；通过已知宽度和比例确定高度，必要时用绝对定位的内部元素建立查询容器。
+独立展示页提供全屏区域，配置器提供预览区域。两者的布局元素都声明 `container-type: size`，并提供不依赖 widget 内容的宽高。默认配置器预览比例沿用现有 `1200 / 630`，高度最多占视口的 40%；通过父容器宽度和视口高度确定尺寸，内部绝对定位元素建立查询容器。
 
 widget 根元素接受 `class="size-full"`。多根节点、`ClientOnly` 或关闭属性继承的组件应把 `$attrs` 转发到实际内容根元素。不要同时保留内部的 `h-screen`。
 
@@ -335,7 +340,7 @@ widget 自定义 CSS 使用 scoped 或唯一命名空间。Tailwind 基础样式
 
 ### 配置器布局与交互
 
-以当前 `app/pages/index/page.vue` 为布局依据：居中 `max-w-xl`、上方品牌与 widget 选择、简介、预览、预览右上角复制操作、下方参数表。不要将 landing page 设计套到配置器上。
+配置器居中 `max-w-xl`。从上到下依次为品牌、widget 选择与复制按钮、简介、无边框预览、参数表。滚动时仅选单与复制按钮所在行、预览区域吸顶；品牌和简介随页面滚走。吸顶复用原有组件节点，连续编辑不重建 widget。
 
 1. 将现有布局迁入 `app/pages/configurator/page.vue`，保留当前结构和间距意图。
 2. widget 选择器列出五个工具。切换工具后导航到新工具的 `/config`，按新工具的默认值初始化，不跨工具沿用专属参数。

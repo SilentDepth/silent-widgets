@@ -1,0 +1,7 @@
+{
+  "error.no_repo": "Set a GitHub repository:",
+  "status.loading": "Loading star count",
+  "status.error": "Could not load stars. Try again.",
+  "status.stars": "Stars",
+  "action.refresh": "Refresh star count"
+}
