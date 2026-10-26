@@ -1,7 +1,11 @@
 <script setup vapor lang="ts">
-import { useMounted } from '@vueuse/core'
+import { onMounted, shallowRef } from 'vue'
 
-const isMounted = useMounted()
+const isMounted = shallowRef(false)
+
+onMounted(() => {
+  isMounted.value = true
+})
 </script>
 
 <template>
