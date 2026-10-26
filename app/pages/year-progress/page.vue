@@ -163,7 +163,7 @@ const cssVars = {
 
 <style>
 @import 'tailwindcss' source(none);
-@source 'widget.vue';
+@source 'page.vue';
 
 @theme {
   --ease-cubic-out: cubic-bezier(0.215, 0.61, 0.355, 1);

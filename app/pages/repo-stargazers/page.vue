@@ -224,7 +224,7 @@ const cssVars = {
 
 <style>
 @import 'tailwindcss' source(none);
-@source 'widget.vue';
+@source 'page.vue';
 
 .frame {
   color: var(--primary-color);

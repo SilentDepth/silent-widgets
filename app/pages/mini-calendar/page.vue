@@ -101,7 +101,7 @@ const cssVars = {
 
 <style>
 @import 'tailwindcss' source(none);
-@source 'widget.vue';
+@source 'page.vue';
 
 .root {
   --widget-width: calc(100vw - 2px);
