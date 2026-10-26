@@ -7,7 +7,12 @@ import { useHead } from '@unhead/vue'
 import { useIntervalFn } from '@vueuse/core'
 import { match, P } from 'ts-pattern'
 import { computed, onMounted, ref } from 'vue'
+import ClientOnly from '@/components/client-only.vue'
 import useI18n from '@/composables/use-i18n'
+
+defineOptions({
+  inheritAttrs: false,
+})
 
 const props = defineProps({
   primary: {
@@ -82,78 +87,81 @@ const cssVars = {
 </script>
 
 <template>
-  <div
-    class="h-screen overflow-hidden flex flex-col justify-center text-(--primary-color) dark:text-(--primary-color-dark) text-xs leading-none whitespace-nowrap"
-    :style="cssVars"
-  >
+  <client-only>
     <div
-      class="h-1 relative"
-      :style="{
-        '--total': months[1].days === 29 ? 366 : 365,
-        '--days': progressDays,
-        '--month': nowMonth,
-        '--gap': '2px',
-      }"
+      v-bind="$attrs"
+      class="h-screen overflow-hidden flex flex-col justify-center text-(--primary-color) dark:text-(--primary-color-dark) text-xs leading-none whitespace-nowrap"
+      :style="cssVars"
     >
-      <div class="flex absolute inset-0" style="gap: var(--gap)">
-        <div
-          v-for="m of months"
-          :key="m.num"
-          class="bg-(--secondary-color) dark:bg-(--secondary-color-dark)"
-          :style="{ flex: `${m.days} 0 0` }"
-        >
-          <transition
-            appear
-            appear-from-class="opacity-0"
-            appear-active-class="duration-1000 delay-1000 ease-linear"
+      <div
+        class="h-1 relative"
+        :style="{
+          '--total': months[1].days === 29 ? 366 : 365,
+          '--days': progressDays,
+          '--month': nowMonth,
+          '--gap': '2px',
+        }"
+      >
+        <div class="flex absolute inset-0" style="gap: var(--gap)">
+          <div
+            v-for="m of months"
+            :key="m.num"
+            class="bg-(--secondary-color) dark:bg-(--secondary-color-dark)"
+            :style="{ flex: `${m.days} 0 0` }"
           >
-            <div
-              v-if="m.num === nowMonth"
-              class="size-full relative"
-              :style="{ width: `${(nowDate / m.days) * 100}%` }"
-            >
-              <span class="flex flex-col gap-0.5 absolute left-0 bottom-full -translate-y-1">
-                <span>{{ nowYear }}</span>
-                <strong>{{ t(`month.${m.num}`) }}</strong>
-              </span>
-              <span
-                class="flex flex-col gap-0.5 absolute left-0 top-full w-full text-right translate-y-1"
-              >
-                <strong>{{ nowDate }}</strong>
-                <span>{{ t(`weekday.${nowWeekday}`) }}</span>
-              </span>
-            </div>
-          </transition>
-        </div>
-      </div>
-      <transition appear appear-active-class="transition duration-2000 ease-cubic-out">
-        <div
-          class="overflow-hidden absolute inset-0 widget-track"
-          :style="{
-            '--w': 'calc(100% - var(--gap) * 11) / var(--total)',
-            '--progress': 'calc(var(--w) * var(--days) + (var(--month) - 1) * var(--gap))',
-            '--offset': 'calc(100% - var(--progress))',
-          }"
-        >
-          <transition appear appear-active-class="transition duration-2000 ease-cubic-out">
-            <div
-              class="flex h-full widget-progress"
-              :style="{
-                gap: 'var(--gap)',
-              }"
+            <transition
+              appear
+              appear-from-class="opacity-0"
+              appear-active-class="duration-1000 delay-1000 ease-linear"
             >
               <div
-                v-for="m of months"
-                :key="m.num"
-                class="bg-current"
-                :style="{ flex: `${m.days} 0 0` }"
-              />
-            </div>
-          </transition>
+                v-if="m.num === nowMonth"
+                class="size-full relative"
+                :style="{ width: `${(nowDate / m.days) * 100}%` }"
+              >
+                <span class="flex flex-col gap-0.5 absolute left-0 bottom-full -translate-y-1">
+                  <span>{{ nowYear }}</span>
+                  <strong>{{ t(`month.${m.num}`) }}</strong>
+                </span>
+                <span
+                  class="flex flex-col gap-0.5 absolute left-0 top-full w-full text-right translate-y-1"
+                >
+                  <strong>{{ nowDate }}</strong>
+                  <span>{{ t(`weekday.${nowWeekday}`) }}</span>
+                </span>
+              </div>
+            </transition>
+          </div>
         </div>
-      </transition>
+        <transition appear appear-active-class="transition duration-2000 ease-cubic-out">
+          <div
+            class="overflow-hidden absolute inset-0 widget-track"
+            :style="{
+              '--w': 'calc(100% - var(--gap) * 11) / var(--total)',
+              '--progress': 'calc(var(--w) * var(--days) + (var(--month) - 1) * var(--gap))',
+              '--offset': 'calc(100% - var(--progress))',
+            }"
+          >
+            <transition appear appear-active-class="transition duration-2000 ease-cubic-out">
+              <div
+                class="flex h-full widget-progress"
+                :style="{
+                  gap: 'var(--gap)',
+                }"
+              >
+                <div
+                  v-for="m of months"
+                  :key="m.num"
+                  class="bg-current"
+                  :style="{ flex: `${m.days} 0 0` }"
+                />
+              </div>
+            </transition>
+          </div>
+        </transition>
+      </div>
     </div>
-  </div>
+  </client-only>
 </template>
 
 <style>
