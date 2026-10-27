@@ -2,15 +2,108 @@
 @source '../../**/*.vue';
 
 @theme {
+  --font-brand: Doto, ui-monospace, monospace;
   --aspect-og: 1200 / 630;
   --ease-cubic-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-cubic-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 @utility text-trim {
   margin-block: calc((1lh - 1em) / -2);
 }
 
+.home-title {
+  view-transition-name: home-title;
+}
+
+.layout-title {
+  view-transition-name: layout-title;
+}
+
+.config-content {
+  view-transition-name: config-content;
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(root),
+::view-transition-group(config-content),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(root),
+::view-transition-old(config-content) {
+  display: none;
+}
+
+::view-transition-new(config-content) {
+  animation: config-content-in calc(var(--title-transition-duration) / 2) var(--ease-cubic-out)
+    calc(var(--title-transition-duration) / 2) both;
+  mix-blend-mode: normal;
+}
+
+::view-transition-group(home-title),
+::view-transition-group(layout-title) {
+  animation-duration: var(--title-transition-duration);
+  animation-timing-function: var(--ease-cubic-in-out);
+}
+
+/* Clip each title at its own edge without interpolating their different sizes. */
+::view-transition-image-pair(home-title),
+::view-transition-image-pair(layout-title) {
+  height: 100%;
+  overflow: clip;
+}
+
+::view-transition-old(home-title),
+::view-transition-new(home-title) {
+  animation-name: title-from-above;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(layout-title),
+::view-transition-new(layout-title) {
+  animation-name: title-from-below;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(home-title),
+::view-transition-old(layout-title) {
+  animation-direction: reverse;
+}
+
+@keyframes config-content-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes title-from-above {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes title-from-below {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 :root {
+  --title-transition-duration: 200ms;
   --ui-canvas: #ffffff;
   --ui-surface: #f7f7f5;
   --ui-text: #37352f;

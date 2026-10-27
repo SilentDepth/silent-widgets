@@ -49,13 +49,19 @@ function pickerColor(value = '') {
 </script>
 
 <template>
-  <div class="param-field">
-    <div class="field-heading">
-      <label :for="id">{{ l(definition.label) }}</label>
-      <code>{{ name }}</code>
+  <div
+    class="param-field grid items-start gap-x-3.5 gap-y-2.5 p-4 text-[13px] max-[560px]:gap-1.75"
+  >
+    <div
+      class="grid gap-1 pt-1.75 max-[560px]:flex max-[560px]:items-baseline max-[560px]:justify-between max-[560px]:p-0"
+    >
+      <label :for="id" class="font-[550]">{{ l(definition.label) }}</label>
+      <code class="text-[11px] text-(--ui-muted)">{{ name }}</code>
     </div>
-    <p :id="`${id}-description`" class="description">{{ l(definition.description) }}</p>
-    <div class="field-control">
+    <p :id="`${id}-description`" class="pt-1.75 leading-[1.65] text-(--ui-muted) max-[560px]:p-0">
+      {{ l(definition.description) }}
+    </p>
+    <div class="grid min-w-0 gap-2">
       <UiInput
         v-if="definition.type === 'boolean'"
         :id="id"
@@ -74,7 +80,12 @@ function pickerColor(value = '') {
         :aria-invalid="Boolean(error)"
         @update:model-value="update"
       >
-        <option v-for="option of definition.options" :key="option.value" :value="option.value">
+        <option
+          v-for="option of definition.options"
+          :key="option.value"
+          :value="option.value"
+          :selected="String(option.value) === modelValue"
+        >
           {{ l(option.label) }}
         </option>
       </UiSelect>
@@ -88,7 +99,7 @@ function pickerColor(value = '') {
         @update:model-value="update"
       />
       <template v-else-if="definition.type === 'color'">
-        <div class="color-input">
+        <div class="flex items-center gap-1.5">
           <UiInput
             type="color"
             :aria-label="t('field.lightPicker', { label: l(definition.label) })"
@@ -106,11 +117,11 @@ function pickerColor(value = '') {
           />
         </div>
         <template v-if="definition.darkVariant">
-          <label class="inherit-color"
+          <label class="flex cursor-pointer items-center gap-1.5 text-xs/normal text-(--ui-muted)"
             ><UiInput type="checkbox" :model-value="!hasDark" @update:model-value="toggleDark" />
             {{ t('field.inheritColor') }}</label
           >
-          <div v-if="hasDark" class="color-input">
+          <div v-if="hasDark" class="flex items-center gap-1.5">
             <UiInput
               type="color"
               :aria-label="t('field.darkPicker', { label: l(definition.label) })"
@@ -139,72 +150,19 @@ function pickerColor(value = '') {
         :inputmode="definition.type === 'integer' ? 'numeric' : undefined"
         @update:model-value="update"
       />
-      <p v-if="error" :id="`${id}-error`" class="field-error">{{ l(error) }}</p>
+      <p v-if="error" :id="`${id}-error`" class="leading-normal text-(--ui-error)">
+        {{ l(error) }}
+      </p>
     </div>
   </div>
 </template>
 
 <style scoped>
 .param-field {
-  display: grid;
   grid-template-columns: 100px 1fr 190px;
-  gap: 10px 14px;
-  padding: 16px;
-  align-items: start;
-  font-size: 13px;
-}
-.field-heading {
-  display: grid;
-  gap: 4px;
-  padding-top: 7px;
-}
-.field-heading label {
-  font-weight: 550;
-}
-.field-heading code {
-  color: var(--ui-muted);
-  font-size: 11px;
-}
-.description {
-  color: var(--ui-muted);
-  line-height: 1.65;
-  padding-top: 7px;
-}
-.field-control {
-  min-width: 0;
-  display: grid;
-  gap: 8px;
-}
-.color-input {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-.inherit-color {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--ui-muted);
-  font-size: 12px;
-  cursor: pointer;
-}
-.field-error {
-  color: var(--ui-error);
-  line-height: 1.5;
-}
-@media (max-width: 560px) {
-  .param-field {
+
+  @media (max-width: 560px) {
     grid-template-columns: 1fr;
-    gap: 7px;
-  }
-  .field-heading {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    padding: 0;
-  }
-  .description {
-    padding: 0;
   }
 }
 </style>

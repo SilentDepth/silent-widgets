@@ -1,3 +1,4 @@
+import { LANGUAGE_OPTIONS } from '@/i18n/languages'
 import { defineText } from '@/i18n/text'
 import type { WidgetParamDefinitions } from '@/types/widget'
 
@@ -7,11 +8,7 @@ export const commonParams = {
     default: 'auto',
     label: defineText('语言', 'Language'),
     description: defineText('选择小工具的显示语言。', 'Choose the language of the widget.'),
-    options: [
-      { value: 'auto', label: defineText('自动', 'Automatic') },
-      { value: 'zh-CN', label: defineText('简体中文', 'Simplified Chinese') },
-      { value: 'en-US', label: defineText('英语', 'English') },
-    ],
+    options: [{ value: 'auto', label: defineText('自动', 'Automatic') }, ...LANGUAGE_OPTIONS],
   },
   bg: {
     type: 'color',

@@ -1,7 +1,7 @@
 import { defineText } from './text'
 
 export const siteMessages = {
-  'home.help': defineText('使用说明', 'How to use'),
+  'site.language': defineText('界面语言', 'Site language'),
   'home.tagline': defineText(
     '给 Notion 页面添加日历、进度和计数。',
     'Calendars, progress bars, and counters for your Notion pages.',
@@ -11,13 +11,11 @@ export const siteMessages = {
     'Choose a widget, make it yours, and embed the link in Notion.',
   ),
   'home.widgets': defineText('小工具', 'Widgets'),
-  'home.count': defineText('{count} 个', '{count} widgets'),
-  'home.configure': defineText('配置', 'Configure'),
   'home.embed': defineText('放进 Notion', 'Add to Notion'),
   'home.step1.title': defineText('选择小工具', 'Choose a widget'),
   'home.step1.body': defineText(
-    '从上方目录找到需要的工具。',
-    'Find the widget you need in the list above.',
+    '从首页挑选需要的小工具。',
+    'Choose the widget you need on the home page.',
   ),
   'home.step2.title': defineText('调整并复制', 'Customize and copy'),
   'home.step2.body': defineText(
@@ -39,24 +37,16 @@ export const siteMessages = {
   'config.preview': defineText('小工具预览', 'Widget preview'),
   'config.copy': defineText('复制地址', 'Copy link'),
   'config.copied': defineText('已复制', 'Copied'),
-  'config.copyFailed': defineText(
-    '无法自动复制，请选中下方地址手动复制。',
-    'Could not copy automatically. Select the link below and copy it manually.',
+  'config.copyFailed': defineText('复制失败', 'Copy failed'),
+  'config.manualCopy': defineText(
+    '无法自动复制，请手动复制以下地址。',
+    'Could not copy automatically. Copy the link below manually.',
   ),
   'config.fixErrors': defineText(
     '请先修正下方参数，再复制地址。',
     'Fix the highlighted fields before copying the link.',
   ),
-  'config.hint': defineText(
-    '调整参数即可更新预览，复制地址后可嵌入 Notion。',
-    'Adjust the settings to update the preview, then copy the link to embed it in Notion.',
-  ),
-  'config.link': defineText('嵌入地址', 'Embed link'),
   'config.parameters': defineText('小工具参数', 'Widget settings'),
-  'config.embedHelp': defineText(
-    '在 Notion 中添加嵌入块，粘贴复制的地址。',
-    'Add an embed block in Notion and paste the copied link.',
-  ),
   'field.lightPicker': defineText('{label}浅色色板', '{label}: light mode color picker'),
   'field.darkPicker': defineText('{label}深色色板', '{label}: dark mode color picker'),
   'field.darkValue': defineText('{label}深色值', '{label}: dark mode value'),

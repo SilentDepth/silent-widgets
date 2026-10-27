@@ -27,6 +27,7 @@ export function createPageNavigation(
   initialUrl: URL,
   automatic: SupportedLang,
   root: HTMLElement,
+  siteLanguage: () => SupportedLang,
 ): PageNavigation & { start: () => void; dispose: () => void } {
   const isNavigating = shallowRef(false)
   const positions = new Map<string, Position>()
@@ -34,6 +35,7 @@ export function createPageNavigation(
   let activeUrl = initialUrl
   let activeId = ''
   let revision = 0
+  let titleTransition: ViewTransition | undefined
 
   function setPending(pending: boolean) {
     isNavigating.value = pending
@@ -71,6 +73,7 @@ export function createPageNavigation(
 
   async function visit(url: URL, pop = false) {
     const current = ++revision
+    titleTransition?.skipTransition()
     if (url.origin !== initialUrl.origin || !siteRoute(url)) {
       if (pop) location.reload()
       else location.assign(url.href)
@@ -83,27 +86,54 @@ export function createPageNavigation(
     const samePage = siteRoute(url) === siteRoute(activeUrl) && url.search === activeUrl.search
     setPending(true)
     try {
-      const page = samePage ? view.page : await loadPage(url, automatic)
+      const page = samePage ? view.page : await loadPage(url, automatic, siteLanguage())
       if (current !== revision) return
       if (!page) throw new Error('Page not found')
-      rememberScroll()
-      if (pop) {
-        history.replaceState({ ...history.state, [HISTORY_KEY]: { id, scroll: position } }, '', url)
-      } else if (url.href !== activeUrl.href) {
-        history.pushState({ [HISTORY_KEY]: { id } }, '', url)
-      }
-      activeId = historyEntry(history.state)!.id
-      activeUrl = url
-      if (!samePage) {
-        view.page = page
-        view.revision++
-        await nextTick()
+      const updatePage = async () => {
         if (current !== revision) return
-        const heading = root.querySelector<HTMLElement>('h1')
-        heading?.setAttribute('tabindex', '-1')
-        heading?.focus({ preventScroll: true })
+        rememberScroll()
+        if (pop) {
+          history.replaceState(
+            { ...history.state, [HISTORY_KEY]: { id, scroll: position } },
+            '',
+            url,
+          )
+        } else if (url.href !== activeUrl.href) {
+          history.pushState({ [HISTORY_KEY]: { id } }, '', url)
+        }
+        activeId = historyEntry(history.state)!.id
+        activeUrl = url
+        if (!samePage) {
+          view.page = page
+          view.revision++
+          await nextTick()
+          if (current !== revision) return
+          const heading = root.querySelector<HTMLElement>('h1')
+          heading?.setAttribute('tabindex', '-1')
+          heading?.focus({ preventScroll: true })
+        }
+        restoreScroll(url, position)
       }
-      restoreScroll(url, position)
+      const changesTitle =
+        (view.page.kind === 'index' && page.kind === 'config') ||
+        (view.page.kind === 'config' && page.kind === 'index')
+      if (
+        changesTitle &&
+        document.startViewTransition &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        // Keep the outgoing title visible after its page has been unmounted.
+        const transition = document.startViewTransition(updatePage)
+        titleTransition = transition
+        void transition.finished
+          .catch(() => {})
+          .finally(() => {
+            if (titleTransition === transition) titleTransition = undefined
+          })
+        await transition.updateCallbackDone
+      } else {
+        await updatePage()
+      }
     } catch {
       if (current !== revision) return
       // A stale or unavailable chunk can still be recovered by a normal page request.
@@ -173,6 +203,7 @@ export function createPageNavigation(
     },
     dispose() {
       revision++
+      titleTransition?.skipTransition()
       setPending(false)
       document.removeEventListener('click', onClick)
       window.removeEventListener('popstate', onPopState)

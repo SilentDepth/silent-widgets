@@ -12,47 +12,17 @@ function update(event: Event) {
 
 <template>
   <input
-    class="ui-input"
+    class="min-w-0 rounded-[5px] border border-(--ui-line) bg-(--ui-canvas) text-(--ui-text) placeholder:text-(--ui-muted) placeholder:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ui-accent) aria-invalid:border-(--ui-error)"
+    :class="
+      type === 'checkbox'
+        ? 'min-h-4.5 w-4.5 cursor-pointer px-2.25 py-1.5 accent-(--ui-accent)'
+        : type === 'color'
+          ? 'min-h-9 w-9 flex-none basis-9 cursor-pointer p-0.75'
+          : 'min-h-9 w-full px-2.25 py-1.5'
+    "
     :type="type"
     :value="modelValue"
     :checked="type === 'checkbox' ? Boolean(modelValue) : undefined"
     @input="update"
   />
 </template>
-
-<style scoped>
-.ui-input {
-  min-width: 0;
-  width: 100%;
-  min-height: 36px;
-  padding: 6px 9px;
-  border: 1px solid var(--ui-line);
-  border-radius: 5px;
-  color: var(--ui-text);
-  background: var(--ui-canvas);
-  font: inherit;
-  &[type='checkbox'] {
-    width: 18px;
-    min-height: 18px;
-    accent-color: var(--ui-accent);
-    cursor: pointer;
-  }
-  &[type='color'] {
-    flex: 0 0 36px;
-    width: 36px;
-    padding: 3px;
-    cursor: pointer;
-  }
-  &[aria-invalid='true'] {
-    border-color: var(--ui-error);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--ui-accent);
-    outline-offset: 2px;
-  }
-  &::placeholder {
-    color: var(--ui-muted);
-    opacity: 1;
-  }
-}
-</style>

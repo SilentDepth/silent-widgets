@@ -1,7 +1,5 @@
 <script setup vapor lang="ts">
 import type { PropType } from 'vue'
-import UiInput from '@/components/ui/input.vue'
-import UiSelect from '@/components/ui/select.vue'
 import WidgetParamField from '@/components/widget-param-field.vue'
 import { usePageNavigation } from '@/composables/use-page-navigation'
 import { useSiteI18n } from '@/composables/use-site-i18n'
@@ -17,7 +15,7 @@ const props = defineProps({
   raw: { type: Object as PropType<Record<string, string>>, required: true },
   origin: { type: String, required: true },
 })
-const { l, t } = useSiteI18n()
+const { lang, l, t } = useSiteI18n()
 const definitions = props.widget.params
 const { navigate, replaceUrl, isNavigating } = usePageNavigation()
 const initial = parseWidgetParams(definitions, props.raw)
@@ -31,6 +29,15 @@ const draft = reactive(
     ]),
   ),
 )
+const followsSiteLanguage = ref(props.raw.lang === undefined)
+if (followsSiteLanguage.value) draft.lang = lang.value
+watch(lang, value => {
+  if (followsSiteLanguage.value) draft.lang = value
+})
+function updateParam(name: string, value: string) {
+  if (name === 'lang') followsSiteLanguage.value = false
+  draft[name] = value
+}
 const values = reactive({ ...props.values })
 const parsed = computed(() => parseWidgetParams(definitions, draft))
 const hasErrors = computed(() => Object.keys(parsed.value.errors).length > 0)
@@ -40,7 +47,6 @@ const finalUrl = computed(() => {
   return url.href
 })
 const copyStatus = ref<'idle' | 'copied' | 'failed'>('idle')
-const manualCopy = ref(false)
 let mounted = false
 let statusTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -50,11 +56,13 @@ watch(
     for (const name of Object.keys(definitions)) {
       if (!result.errors[name]) values[name] = result.values[name]
     }
+    clearTimeout(statusTimer)
     copyStatus.value = 'idle'
-    manualCopy.value = false
     if (mounted && !hasErrors.value) {
       const url = new URL(finalUrl.value)
       url.pathname += '/config'
+      // Preserve an explicit auto choice when reopening the configurator.
+      url.searchParams.set('lang', String(values.lang))
       replaceUrl(url)
     }
   },
@@ -69,201 +77,136 @@ function selectWidget(id: string) {
   navigate(`/${id}/config`)
 }
 async function copyUrl() {
-  if (hasErrors.value) return
+  if (hasErrors.value || isNavigating.value) return
   clearTimeout(statusTimer)
+  const url = finalUrl.value
   try {
-    await navigator.clipboard.writeText(finalUrl.value)
+    await navigator.clipboard.writeText(url)
+    clearTimeout(statusTimer)
     copyStatus.value = 'copied'
-    manualCopy.value = false
     statusTimer = setTimeout(() => {
       copyStatus.value = 'idle'
-    }, 2500)
+    }, 2000)
   } catch {
     copyStatus.value = 'failed'
-    manualCopy.value = true
+    window.prompt(t('config.manualCopy'), url)
   }
-}
-function selectAddress(event: FocusEvent) {
-  ;(event.target as HTMLInputElement).select()
 }
 </script>
 
 <template>
-  <main class="px-4 pb-12">
-    <div class="config-content max-w-xl mx-auto">
-      <header class="pt-8 pb-5">
-        <a href="/" class="brand-link">Silent Widgets</a>
-        <h1 class="sr-only">{{ t('config.title', { widget: l(widget.meta.name) }) }}</h1>
-      </header>
-      <div class="widget-toolbar">
-        <UiSelect
-          class="widget-select"
+  <div class="config-content @container mx-auto max-w-xl">
+    <h1 class="sr-only">{{ t('config.title', { widget: l(widget.meta.name) }) }}</h1>
+    <div
+      class="flex justify-between items-center gap-3 h-(--toolbar-height) bg-(--ui-canvas) sticky top-0 z-20"
+    >
+      <div class="relative min-w-0">
+        <select
+          class="h-9 w-full min-w-0 appearance-none rounded-[5px] border-0 bg-(--ui-canvas) p-0 pr-5 text-lg font-semibold text-(--ui-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ui-accent)"
           :aria-label="t('config.select')"
-          :model-value="widget.id"
+          :value="widget.id"
           :disabled="isNavigating"
-          @update:model-value="selectWidget"
+          @change="selectWidget(($event.target as HTMLSelectElement).value)"
         >
-          <option v-for="item of widgets" :key="item.id" :value="item.id">
+          <option
+            v-for="item of widgets"
+            :key="item.id"
+            :value="item.id"
+            :selected="item.id === widget.id"
+          >
             {{ l(item.meta.name) }}
           </option>
-        </UiSelect>
-        <button
-          type="button"
-          class="copy-button"
-          :disabled="hasErrors || isNavigating"
-          aria-describedby="copy-status"
-          @click="copyUrl"
+        </select>
+        <svg
+          viewBox="0 0 24 24"
+          class="pointer-events-none absolute top-1/2 right-0 size-4 -translate-y-1/2 text-(--ui-text)"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            class="size-4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            aria-hidden="true"
-          >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </div>
+      <button
+        type="button"
+        :disabled="hasErrors || isNavigating"
+        :title="hasErrors ? t('config.fixErrors') : undefined"
+        class="flex h-9 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-[5px] border border-(--ui-line) bg-(--ui-canvas) px-2.5 py-1.75 text-xs/normal whitespace-nowrap text-(--ui-text) focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-(--ui-accent) enabled:hover:bg-(--ui-surface) disabled:cursor-not-allowed disabled:opacity-55"
+        @click="copyUrl"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="size-4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          aria-hidden="true"
+        >
+          <path
+            v-if="copyStatus === 'copied'"
+            d="m5 12 4 4L19 6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <template v-else>
             <rect x="8" y="8" width="12" height="13" rx="3" />
             <path d="M16 8V6a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h2" />
-          </svg>
-          {{ t(copyStatus === 'copied' ? 'config.copied' : 'config.copy') }}
-        </button>
-      </div>
-      <p class="widget-description">{{ l(widget.meta.description) }}</p>
-      <section class="preview rounded-md overflow-hidden" :aria-label="t('config.preview')">
-        <div class="absolute inset-0" style="container-type: size">
-          <component :is="component" v-bind="values" :no-animation="true" class="size-full" />
-        </div>
-      </section>
-      <p id="copy-status" class="copy-status mt-2" role="status" aria-live="polite">
-        {{
-          hasErrors
-            ? t('config.fixErrors')
-            : t(
-                copyStatus === 'failed'
+          </template>
+        </svg>
+        <span role="status" aria-live="polite" aria-atomic="true">
+          {{
+            t(
+              copyStatus === 'copied'
+                ? 'config.copied'
+                : copyStatus === 'failed'
                   ? 'config.copyFailed'
-                  : copyStatus === 'copied'
-                    ? 'config.copied'
-                    : 'config.hint',
-              )
-        }}
-      </p>
-      <UiInput
-        v-if="manualCopy"
-        class="mt-2"
-        :aria-label="t('config.link')"
-        :model-value="finalUrl"
-        readonly
-        @focus="selectAddress"
-      />
-      <form
-        class="parameter-list mt-4"
-        :aria-label="t('config.parameters')"
-        :inert="isNavigating"
-        @submit.prevent="copyUrl"
-      >
-        <WidgetParamField
-          v-for="(definition, name) of definitions"
-          :key="name"
-          :name="name"
-          :definition="definition"
-          v-model="draft[name]"
-          :error="parsed.errors[name]"
-        />
-      </form>
-      <p class="embed-help mt-5">{{ t('config.embedHelp') }}</p>
+                  : 'config.copy',
+            )
+          }}
+        </span>
+      </button>
     </div>
-  </main>
+    <p class="mt-1 mb-5 text-sm/normal text-(--ui-muted)">
+      {{ l(widget.meta.description) }}
+    </p>
+    <section
+      class="sticky top-(--toolbar-height) z-10 h-(--preview-height) overflow-hidden rounded-md bg-(--ui-canvas)"
+      :aria-label="t('config.preview')"
+    >
+      <div class="@container-size absolute inset-0">
+        <component :is="component" v-bind="values" :no-animation="true" class="size-full" />
+      </div>
+    </section>
+    <form
+      class="mt-4 divide-y divide-(--ui-line) overflow-clip rounded-md border border-(--ui-line)"
+      :aria-label="t('config.parameters')"
+      :inert="isNavigating"
+      @submit.prevent="copyUrl"
+    >
+      <WidgetParamField
+        v-for="(definition, name) of definitions"
+        :key="name"
+        :name="name"
+        :definition="definition"
+        :model-value="draft[name]"
+        @update:model-value="updateParam(name, $event)"
+        :error="parsed.errors[name]"
+      />
+    </form>
+  </div>
 </template>
 
 <style scoped>
 .config-content {
-  container-type: inline-size;
-  --toolbar-height: 56px;
+  --toolbar-height: calc(var(--spacing) * 9);
   --preview-height: min(52.5cqw, 40dvh);
-}
-.widget-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  height: var(--toolbar-height);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--ui-canvas);
-}
-.brand-link {
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.widget-select {
-  flex: 1;
-  height: 40px;
-  font-size: 18px;
-  font-weight: 600;
-  border-color: transparent;
-  padding-left: 0;
-  padding-block: 0;
-}
-.widget-description,
-.embed-help {
-  color: var(--ui-muted);
-  font-size: 14px;
-}
-.widget-description {
-  margin: 4px 0 20px;
-}
-.preview {
-  position: sticky;
-  top: var(--toolbar-height);
-  z-index: 10;
-  height: var(--preview-height);
-  background: var(--ui-canvas);
 }
 :deep(input),
 :deep(select) {
   scroll-margin-top: calc(var(--toolbar-height) + var(--preview-height) + 16px);
-}
-.copy-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  flex-shrink: 0;
-  min-height: 40px;
-  white-space: nowrap;
-  padding: 7px 10px;
-  border: 1px solid var(--ui-line);
-  border-radius: 5px;
-  background: var(--ui-canvas);
-  color: var(--ui-text);
-  font-size: 12px;
-  cursor: pointer;
-}
-.copy-button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-.copy-button:enabled:hover {
-  background: var(--ui-surface);
-}
-.copy-button:focus-visible,
-.brand-link:focus-visible {
-  outline: 2px solid var(--ui-accent);
-  outline-offset: 3px;
-}
-.copy-status {
-  min-height: 22px;
-  color: var(--ui-muted);
-  font-size: 12px;
-}
-.parameter-list {
-  border: 1px solid var(--ui-line);
-  border-radius: 6px;
-  overflow: clip;
-}
-.parameter-list > :deep(.param-field + .param-field) {
-  border-top: 1px solid var(--ui-line);
 }
 </style>

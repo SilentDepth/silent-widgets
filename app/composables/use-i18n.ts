@@ -3,7 +3,7 @@ import { getWidgetI18n, loadWidgetI18n } from '@/widgets/i18n'
 export const SupportedLang = { enUS: 'en-US', zhCN: 'zh-CN' } as const
 export type SupportedLang = ValueOf<typeof SupportedLang>
 const DEFAULT_LANG: SupportedLang = SupportedLang.enUS
-export const autoLanguageKey: InjectionKey<SupportedLang> = Symbol('auto-language')
+export const autoLanguageKey: InjectionKey<MaybeRef<SupportedLang>> = Symbol('auto-language')
 
 export function resolveLanguage(value: unknown): SupportedLang {
   if (typeof value !== 'string') return DEFAULT_LANG
@@ -30,7 +30,9 @@ export function resolveLanguage(value: unknown): SupportedLang {
 
 export function useWidgetLanguage(requested: () => string) {
   const automatic = inject(autoLanguageKey, DEFAULT_LANG)
-  return computed(() => (requested() === 'auto' ? automatic : resolveLanguage(requested())))
+  return computed(() =>
+    requested() === 'auto' ? toValue(automatic) : resolveLanguage(requested()),
+  )
 }
 
 export default function useI18n(id: string, requested: () => string) {

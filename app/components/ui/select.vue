@@ -7,25 +7,11 @@ function update(event: Event) {
 </script>
 
 <template>
-  <select class="ui-select" :value="modelValue" @change="update">
+  <select
+    class="min-h-9 w-full min-w-0 rounded-[5px] border border-(--ui-line) bg-(--ui-canvas) py-1.5 pr-7 pl-2.25 text-(--ui-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ui-accent)"
+    :value="modelValue"
+    @change="update"
+  >
     <slot />
   </select>
 </template>
-
-<style scoped>
-.ui-select {
-  width: 100%;
-  min-width: 0;
-  min-height: 36px;
-  padding: 6px 28px 6px 9px;
-  border: 1px solid var(--ui-line);
-  border-radius: 5px;
-  color: var(--ui-text);
-  background: var(--ui-canvas);
-  font: inherit;
-  &:focus-visible {
-    outline: 2px solid var(--ui-accent);
-    outline-offset: 2px;
-  }
-}
-</style>

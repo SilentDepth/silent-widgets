@@ -14,12 +14,22 @@ export function resolveWidgetRoute(pathname: string) {
   return { kind: match[2] ? ('config' as const) : ('widget' as const), widget }
 }
 
-export async function prepareWidget(url: URL, automatic: SupportedLang) {
+export async function prepareWidget(url: URL, automatic: SupportedLang, siteLanguage = automatic) {
   const route = resolveWidgetRoute(url.pathname)
   if (!route || route.kind === 'index') return null
   const { widget } = route
-  const parsed = parseWidgetParams(widget.params, url.searchParams)
-  const language = parsed.values.lang === 'auto' ? automatic : resolveLanguage(parsed.values.lang)
+  const raw = Object.fromEntries(url.searchParams)
+  if (route.kind === 'config' && widget.id === 'date-counter' && raw.date === undefined) {
+    raw.date = `${new Date().getFullYear() + 1}-01-01`
+  }
+  const parsed = parseWidgetParams(widget.params, raw)
+  if (route.kind === 'config' && !url.searchParams.has('lang')) parsed.values.lang = siteLanguage
+  const language =
+    parsed.values.lang === 'auto'
+      ? route.kind === 'config'
+        ? siteLanguage
+        : automatic
+      : resolveLanguage(parsed.values.lang)
   const [component] = await Promise.all([
     loadWidget(widget.id),
     loadWidgetI18n(widget.id, language),
@@ -28,6 +38,6 @@ export async function prepareWidget(url: URL, automatic: SupportedLang) {
     widget,
     component: markRaw(component),
     values: parsed.values,
-    raw: Object.fromEntries(url.searchParams),
+    raw,
   }
 }
