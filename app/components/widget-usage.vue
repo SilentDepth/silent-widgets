@@ -50,7 +50,7 @@ async function copyCode() {
     class="mt-14 scroll-mt-6 border-y border-(--ui-line) py-8 max-[600px]:mt-10"
     aria-labelledby="embed-title"
   >
-    <div class="box-content mx-auto max-w-4xl px-4">
+    <div class="mx-auto box-content max-w-4xl px-4">
       <h2 id="embed-title" class="text-[26px]/8 font-semibold max-[600px]:text-[22px]/7">
         {{ t('usage.title') }}
       </h2>
@@ -79,25 +79,35 @@ async function copyCode() {
           <p class="mt-1.5 text-[13px]/6 text-(--ui-muted)">
             {{ t('usage.notion.description') }}
           </p>
-          <div class="notion-preview mt-3 rounded-md border border-(--ui-line)">
-            <div class="paste-anchor">
-              <div class="paste-line">
+          <div
+            class="@container mt-3 min-h-69 rounded-md border border-(--ui-line) pt-6 pr-4 pb-5 [@media(width<=600px)]:min-h-61.25"
+          >
+            <div class="relative w-max max-w-full">
+              <div
+                class="flex items-center justify-end gap-0.5 overflow-clip whitespace-nowrap focus-within:outline-2 focus-within:outline-offset-3 focus-within:outline-(--ui-accent)"
+              >
                 <span
                   role="textbox"
                   aria-readonly="true"
                   :aria-disabled="disabled || undefined"
                   :aria-label="t('usage.widgetUrl')"
                   :tabindex="disabled ? -1 : 0"
-                  class="notion-url"
+                  class="peer flex-none cursor-text ps-4 text-(--ui-muted) underline underline-offset-2 outline-none"
                   @focus="selectUrl"
                   @click="selectUrl"
                   @keydown.enter.prevent="selectUrl"
                   @keydown.space.prevent="selectUrl"
                   >{{ url }}</span
                 >
-                <span class="paste-caret" aria-hidden="true" />
+                <span
+                  class="paste-caret h-[1.25em] w-[1.5px] flex-none bg-(--ui-muted) peer-focus:invisible"
+                  aria-hidden="true"
+                />
               </div>
-              <div class="paste-menu" aria-hidden="true">
+              <div
+                class="paste-menu absolute w-53 max-w-[100cqw] rounded-[9px] border border-(--ui-line) bg-(--ui-canvas) select-none"
+                aria-hidden="true"
+              >
                 <div class="px-3 pt-2.5 pb-1 text-xs/5 font-semibold text-(--ui-muted)">
                   {{ t('usage.notion.pasteAs') }}
                 </div>
@@ -193,7 +203,7 @@ async function copyCode() {
               </button>
             </div>
             <pre
-              class="min-h-0 flex-1 overflow-x-auto px-4 py-4 text-xs/6 text-(--ui-text) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--ui-accent) max-[600px]:py-3 max-[600px]:text-xs/5"
+              class="min-h-0 flex-1 overflow-x-auto p-4 text-xs/6 text-(--ui-text) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--ui-accent) max-[600px]:py-3 max-[600px]:text-xs/5"
               tabindex="0"
               :aria-label="t('usage.code.title')"
             ><code>{{ iframeCode }}</code></pre>
@@ -206,65 +216,14 @@ async function copyCode() {
 </template>
 
 <style scoped>
-.notion-preview {
-  container-type: inline-size;
-  min-height: 276px;
-  padding: 24px 16px 20px 0;
-}
-
-.paste-anchor {
-  position: relative;
-  width: max-content;
-  max-width: 100%;
-}
-
-.paste-line {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 2px;
-  overflow: clip;
-  white-space: nowrap;
-}
-
-.paste-line:focus-within {
-  outline: 2px solid var(--ui-accent);
-  outline-offset: 3px;
-}
-
-.notion-url {
-  flex: none;
-  padding-inline-start: 16px;
-  color: var(--ui-muted);
-  cursor: text;
-  outline: none;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
 .paste-caret {
-  flex: none;
-  width: 1.5px;
-  height: 1.25em;
-  background: var(--ui-muted);
   animation: paste-caret-blink 1s step-end infinite;
 }
 
-.notion-url:focus + .paste-caret {
-  visibility: hidden;
-}
-
 .paste-menu {
-  position: absolute;
   top: calc(100% + 8px);
   left: clamp(0px, 100%, max(0px, calc(100cqw - 212px)));
-  width: 212px;
-  max-width: 100cqw;
-  border: 1px solid var(--ui-line);
-  border-radius: 9px;
-  background: var(--ui-canvas);
   box-shadow: 0 6px 18px rgb(0 0 0 / 7%);
-  user-select: none;
 }
 
 @keyframes paste-caret-blink {
@@ -281,12 +240,6 @@ async function copyCode() {
 @media (prefers-reduced-motion: reduce) {
   .paste-caret {
     animation: none;
-  }
-}
-
-@media (width <= 600px) {
-  .notion-preview {
-    min-height: 245px;
   }
 }
 </style>
