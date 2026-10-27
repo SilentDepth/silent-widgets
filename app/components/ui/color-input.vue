@@ -30,7 +30,15 @@ const opacity = computed(() =>
 )
 
 function setColor(event: Event) {
-  emit('update:modelValue', (event.target as HTMLInputElement).value + (hex.value?.alpha ?? ''))
+  const value = (event.target as HTMLInputElement).value.trim()
+  const rgb = /^#[\da-f]{3}$/i.test(value)
+    ? `#${value
+        .slice(1)
+        .split('')
+        .map(char => char + char)
+        .join('')}`
+    : value
+  emit('update:modelValue', /^#[\da-f]{6}$/i.test(rgb) ? rgb + (hex.value?.alpha ?? '') : value)
 }
 function setOpacity(event: Event) {
   const input = event.target as HTMLInputElement
@@ -44,7 +52,7 @@ function setOpacity(event: Event) {
 
 <template>
   <div
-    class="flex h-9 min-w-0 items-center gap-1 rounded-[5px] border px-1.5 focus-within:border-(--ui-accent)"
+    class="flex h-9 min-w-0 items-center gap-1 text-base sm:text-sm rounded-[5px] border px-1.5 focus-within:border-(--ui-accent)"
     :class="[
       disabled ? 'bg-(--ui-surface)' : 'bg-(--ui-canvas)',
       invalid ? 'border-(--ui-error)' : 'border-(--ui-line)',
@@ -70,8 +78,8 @@ function setOpacity(event: Event) {
     <input
       :id="id"
       type="text"
-      class="size-full min-w-0 bg-transparent font-mono text-[11px] text-(--ui-text) placeholder:font-sans placeholder:text-(--ui-muted) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ui-accent) disabled:cursor-not-allowed disabled:text-(--ui-muted)"
-      :value="modelValue"
+      class="size-full min-w-0 bg-transparent font-mono text-(--ui-text) placeholder:font-sans placeholder:text-(--ui-muted) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ui-accent) disabled:cursor-not-allowed disabled:text-(--ui-muted)"
+      :value="hex?.rgb ?? modelValue"
       :disabled="disabled"
       :placeholder="placeholder"
       :aria-label="label"
@@ -79,11 +87,9 @@ function setOpacity(event: Event) {
       :aria-invalid="invalid"
       spellcheck="false"
       autocomplete="off"
-      @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      @change="setColor"
     />
-    <span
-      class="flex shrink-0 items-center border-l border-(--ui-line) pl-1 text-[11px] text-(--ui-muted)"
-    >
+    <span class="flex shrink-0 items-center border-l border-(--ui-line) pl-1 text-(--ui-muted)">
       <input
         type="number"
         class="color-opacity w-[3ch] min-w-0 bg-transparent text-right font-mono focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ui-accent) disabled:cursor-not-allowed"
