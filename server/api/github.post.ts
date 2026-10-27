@@ -17,6 +17,7 @@ export default defineHandler(async event => {
     headers: {
       authorization: `Bearer ${token}`,
       'content-type': 'application/json',
+      'user-agent': 'silent-widgets',
     },
     body: await event.req.text(),
   })
