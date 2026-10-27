@@ -21,14 +21,8 @@ export default defineHandler(async event => {
     },
     body: await event.req.text(),
   })
-  const text = await response.text()
-
   event.res.status = response.status
   event.res.headers.set('content-type', response.headers.get('content-type') || 'application/json')
 
-  try {
-    return JSON.parse(text)
-  } catch {
-    return text
-  }
+  return response.text()
 })

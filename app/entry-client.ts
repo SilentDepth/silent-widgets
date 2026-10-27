@@ -3,7 +3,6 @@ import { createVaporSSRApp as createApp } from 'vue'
 import { autoLanguageKey, resolveLanguage } from '@/composables/use-i18n'
 import { pageNavigationKey } from '@/composables/use-page-navigation'
 import { createSiteLanguage, siteLanguageKey } from '@/composables/use-site-language'
-import { resolveWidgetRoute } from '@/utils/widget-utils'
 import '@/assets/styles/main.css'
 import App from './app.vue'
 import { loadPage } from './routes'
@@ -22,7 +21,7 @@ async function main() {
   app.provide(siteLanguageKey, siteLanguage)
   app.use(createHead())
   const navigation =
-    resolveWidgetRoute(url.pathname)?.kind !== 'widget'
+    page.kind !== 'widget'
       ? (await import('./navigation')).createPageNavigation(
           view,
           url,

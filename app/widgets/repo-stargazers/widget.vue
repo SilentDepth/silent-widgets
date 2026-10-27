@@ -23,8 +23,7 @@ const { lang, t } = useI18n('repo-stargazers', () => props.lang)
 const parts = computed(() => props.repo.split('/'))
 const owner = computed(() => parts.value[0] || '???')
 const name = computed(() => parts.value[1] || '???')
-const missingRepo = computed(() => typeof props.repo !== 'string' || !props.repo)
-const shouldHumanize = computed(() => props.humanize)
+const missingRepo = computed(() => !props.repo)
 const loading = ref(false)
 const error = ref<unknown>(null)
 const stargazerCount = ref(0)
@@ -35,7 +34,7 @@ let activeRequest: AbortController | undefined
 let refreshTimer: ReturnType<typeof setTimeout> | undefined
 
 const count = computed(() =>
-  shouldHumanize.value
+  props.humanize
     ? humanizeNumber(stargazerCount.value)
     : stargazerCount.value.toLocaleString(lang.value),
 )
@@ -88,12 +87,19 @@ async function load() {
         variables: { owner: owner.value, name: name.value },
       }),
     })
-    const payload = await response.json()
-    if (!response.ok || payload.errors)
-      throw new Error(payload.errors?.[0]?.message || 'Failed to fetch stargazer count')
-    const value = payload.data?.repository?.stargazerCount
-    if (!Number.isFinite(value) || value < 0) throw new Error('Invalid stargazer count')
-    if (current === revision) stargazerCount.value = value
+    const payload: unknown = await response.json()
+    if (
+      !response.ok ||
+      !isMatching(
+        {
+          data: { repository: { stargazerCount: P.number.finite().gte(0) } },
+          errors: P.optional(P.nullish),
+        },
+        payload,
+      )
+    )
+      throw new Error('Failed to fetch stargazer count')
+    if (current === revision) stargazerCount.value = payload.data.repository.stargazerCount
   } catch (err) {
     if (current === revision && !controller.signal.aborted) error.value = err
   } finally {
@@ -106,11 +112,7 @@ async function load() {
   }
 }
 
-function refetch() {
-  scheduleRefresh(0)
-}
-
-function humanizeNumber(num: number): string {
+function humanizeNumber(num: number) {
   if (num < 1000) return String(num)
   const units = [
     { label: 'B', scale: 1e9 },
@@ -163,7 +165,7 @@ const cssVars = useWidgetStyle(() => ({ bg: props.bg, primary: props.primary, st
           ]"
           @mouseenter="!loading && !error && (showRefetch = true)"
           @mouseleave="showRefetch = false"
-          @click="refetch"
+          @click="scheduleRefresh(0)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

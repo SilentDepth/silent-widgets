@@ -154,9 +154,7 @@ export function createPageNavigation(
       event.altKey
     )
       return
-    const anchor = event.composedPath().find(node => node instanceof HTMLAnchorElement) as
-      | HTMLAnchorElement
-      | undefined
+    const anchor = event.composedPath().find(node => node instanceof HTMLAnchorElement)
     if (
       !anchor ||
       !root.contains(anchor) ||

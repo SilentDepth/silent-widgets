@@ -37,7 +37,7 @@ export default {
     const head = createHead({
       init: [
         {
-          link: assets.css.map((attrs: { href: string }) => ({ rel: 'stylesheet', ...attrs })),
+          link: assets.css.map(attrs => ({ rel: 'stylesheet', ...attrs })),
           script: [{ type: 'module', src: assets.entry }],
         },
       ],

@@ -4,6 +4,7 @@ import WidgetParamField from '@/components/widget-param-field.vue'
 import { usePageNavigation } from '@/composables/use-page-navigation'
 import { useSiteI18n } from '@/composables/use-site-i18n'
 import { useWidgetEmbed } from '@/composables/use-widget-embed'
+import type { LocalizedText } from '@/i18n/text'
 import type { WidgetValue } from '@/types/widget'
 import { parseWidgetParams, serializeParam, serializeWidgetParams } from '@/utils/widget-params'
 import { widgets } from '@/widgets/registry'
@@ -13,26 +14,21 @@ const props = defineProps({
   widget: { type: Object as PropType<WidgetEntry>, required: true },
   component: { type: Object as PropType<VaporComponent>, required: true },
   values: { type: Object as PropType<Record<string, WidgetValue>>, required: true },
+  errors: { type: Object as PropType<Record<string, LocalizedText>>, required: true },
   raw: { type: Object as PropType<Record<string, string>>, required: true },
   origin: { type: String, required: true },
 })
 const { l, t } = useSiteI18n()
 const definitions = props.widget.params
 const { navigate, replaceUrl, isNavigating } = usePageNavigation()
-const initial = parseWidgetParams(definitions, props.raw)
 const draft = reactive(
   Object.fromEntries(
     Object.entries(definitions).map(([name, definition]) => [
       name,
-      initial.errors[name]
-        ? (props.raw[name] ?? '')
-        : serializeParam(definition, initial.values[name]),
+      props.errors[name] ? (props.raw[name] ?? '') : serializeParam(definition, props.values[name]),
     ]),
   ),
 )
-function updateParam(name: string, value: string) {
-  draft[name] = value
-}
 const values = reactive({ ...props.values })
 const parsed = computed(() => parseWidgetParams(definitions, draft))
 const hasErrors = computed(() => Object.keys(parsed.value.errors).length > 0)
@@ -70,9 +66,6 @@ onMounted(() => {
 })
 onUnmounted(() => clearTimeout(statusTimer))
 
-function selectWidget(id: string) {
-  navigate(`/${id}/config`)
-}
 async function copyUrl() {
   if (hasErrors.value || isNavigating.value) return
   clearTimeout(statusTimer)
@@ -103,7 +96,7 @@ async function copyUrl() {
           :aria-label="t('config.select')"
           :value="widget.id"
           :disabled="isNavigating"
-          @change="selectWidget(($event.target as HTMLSelectElement).value)"
+          @change="navigate(`/${($event.target as HTMLSelectElement).value}/config`)"
         >
           <option
             v-for="item of widgets"
@@ -189,8 +182,7 @@ async function copyUrl() {
         :key="name"
         :name="name"
         :definition="definition"
-        :model-value="draft[name]"
-        @update:model-value="updateParam(name, $event)"
+        v-model="draft[name]"
         :error="parsed.errors[name]"
       />
     </form>

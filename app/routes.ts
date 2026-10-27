@@ -1,7 +1,10 @@
 import { resolveLanguage } from '@/composables/use-i18n'
 import type { SupportedLang } from '@/composables/use-i18n'
 import { defineText, localize } from '@/i18n/text'
-import { prepareWidget, resolveWidgetRoute } from '@/utils/widget-utils'
+import { parseWidgetParams } from '@/utils/widget-params'
+import { resolveWidgetRoute } from '@/utils/widget-utils'
+import { loadWidgetI18n } from '@/widgets/i18n'
+import { loadWidget } from '@/widgets/registry'
 
 export type LoadedPage = NonNullable<Awaited<ReturnType<typeof loadPage>>>
 export interface PageView {
@@ -25,19 +28,27 @@ export async function loadPage(url: URL, automatic: SupportedLang, siteLanguage 
       meta: [],
     }
   }
-  const prepared = await prepareWidget(url, automatic, siteLanguage)
-  if (!prepared) return null
+  const { widget } = route
+  const raw = Object.fromEntries(url.searchParams)
+  if (route.kind === 'config' && widget.id === 'date-counter' && raw.date === undefined) {
+    raw.date = `${new Date().getFullYear() + 1}-01-01`
+  }
+  const parsed = parseWidgetParams(widget.params, raw)
+  const widgetLanguage =
+    parsed.values.lang === 'auto'
+      ? route.kind === 'config'
+        ? siteLanguage
+        : automatic
+      : resolveLanguage(parsed.values.lang)
+  const [widgetComponent] = await Promise.all([
+    loadWidget(widget.id),
+    loadWidgetI18n(widget.id, widgetLanguage),
+  ])
   const component =
     route.kind === 'widget'
       ? (await import('./pages/widget/page.vue')).default
       : (await import('./pages/configurator/page.vue')).default
-  const { widget } = route
-  const lang =
-    route.kind === 'config'
-      ? siteLanguage
-      : prepared.values.lang === 'auto'
-        ? automatic
-        : resolveLanguage(prepared.values.lang)
+  const lang = route.kind === 'config' ? siteLanguage : widgetLanguage
   const name = localize(widget.meta.name, lang)
   const title =
     route.kind === 'config'
@@ -51,7 +62,7 @@ export async function loadPage(url: URL, automatic: SupportedLang, siteLanguage 
     origin: url.origin,
     layout,
     component,
-    props: { ...prepared, origin: url.origin },
+    props: { widget, component: markRaw(widgetComponent), ...parsed, raw, origin: url.origin },
     title,
     lang,
     meta: [

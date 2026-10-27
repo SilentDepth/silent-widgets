@@ -2,7 +2,7 @@ import { getWidgetI18n, loadWidgetI18n } from '@/widgets/i18n'
 
 export const SupportedLang = { enUS: 'en-US', zhCN: 'zh-CN' } as const
 export type SupportedLang = ValueOf<typeof SupportedLang>
-const DEFAULT_LANG: SupportedLang = SupportedLang.enUS
+const DEFAULT_LANG = SupportedLang.enUS
 export const autoLanguageKey: InjectionKey<MaybeRef<SupportedLang>> = Symbol('auto-language')
 
 export function resolveLanguage(value: unknown): SupportedLang {
@@ -48,12 +48,8 @@ export default function useI18n(id: string, requested: () => string) {
         resource.value = cached
         return
       }
-      try {
-        const next = await loadWidgetI18n(id, value)
-        if (current === revision) resource.value = next
-      } catch {
-        if (current === revision) resource.value = getWidgetI18n(id, 'en-US') ?? {}
-      }
+      const next = await loadWidgetI18n(id, value).catch(() => getWidgetI18n(id, 'en-US') ?? {})
+      if (current === revision) resource.value = next
     },
     { immediate: true },
   )
