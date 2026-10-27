@@ -1,14 +1,25 @@
 <script setup vapor lang="ts">
 import { useHead } from '@unhead/vue'
+import WidgetUsage from '@/components/widget-usage.vue'
 import { autoLanguageKey } from '@/composables/use-i18n'
 import { useSiteI18n } from '@/composables/use-site-i18n'
 import { useSiteLanguage } from '@/composables/use-site-language'
+import { widgetEmbedKey } from '@/composables/use-widget-embed'
+import type { WidgetEmbed } from '@/composables/use-widget-embed'
 import { LANGUAGE_OPTIONS } from '@/i18n/languages'
 
-defineProps<{ isHome: boolean }>()
+const props = defineProps<{ isHome: boolean; origin: string }>()
 const { lang, t } = useSiteI18n()
 const { setLanguage } = useSiteLanguage()
 provide(autoLanguageKey, lang)
+const widgetEmbed = shallowRef<WidgetEmbed>()
+provide(widgetEmbedKey, widgetEmbed)
+const widgetUrl = computed(() => {
+  if (widgetEmbed.value) return widgetEmbed.value.url.value
+  const url = new URL('/year-progress', props.origin)
+  url.searchParams.set('lang', lang.value)
+  return url.href
+})
 
 useHead({
   link: [
@@ -74,68 +85,29 @@ useHead({
       <div class="px-4">
         <slot />
       </div>
-      <section
-        id="embed"
-        class="pt-8 scroll-mt-6 border-y border-(--ui-line) mt-14 max-[600px]:mt-10 bg-amber-50"
-        aria-labelledby="embed-title"
-      >
-        <div class="box-content max-w-4xl px-4 mx-auto">
-          <h2 id="embed-title" class="text-base/6 font-semibold">{{ t('home.embed') }}</h2>
-          <ol
-            class="mt-5 grid list-none grid-cols-3 gap-5 max-[600px]:grid-cols-1 max-[600px]:gap-4.5"
-          >
-            <li class="flex items-baseline gap-2.5">
-              <span
-                class="inline-grid size-5.5 shrink-0 place-items-center rounded-sm bg-(--ui-surface) text-xs/normal"
-                aria-hidden="true"
-                >1</span
-              >
-              <div>
-                <h3 class="text-sm/5.5 font-semibold">{{ t('home.step1.title') }}</h3>
-                <p class="mt-1.5 text-[13px]/5.5 text-(--ui-muted) max-[600px]:mt-0.5">
-                  {{ t('home.step1.body') }}
-                </p>
-              </div>
-            </li>
-            <li class="flex items-baseline gap-2.5">
-              <span
-                class="inline-grid size-5.5 shrink-0 place-items-center rounded-sm bg-(--ui-surface) text-xs/normal"
-                aria-hidden="true"
-                >2</span
-              >
-              <div>
-                <h3 class="text-sm/5.5 font-semibold">{{ t('home.step2.title') }}</h3>
-                <p class="mt-1.5 text-[13px]/5.5 text-(--ui-muted) max-[600px]:mt-0.5">
-                  {{ t('home.step2.body') }}
-                </p>
-              </div>
-            </li>
-            <li class="flex items-baseline gap-2.5">
-              <span
-                class="inline-grid size-5.5 shrink-0 place-items-center rounded-sm bg-(--ui-surface) text-xs/normal"
-                aria-hidden="true"
-                >3</span
-              >
-              <div>
-                <h3 class="text-sm/5.5 font-semibold">{{ t('home.step3.title') }}</h3>
-                <p class="mt-1.5 text-[13px]/5.5 text-(--ui-muted) max-[600px]:mt-0.5">
-                  {{ t('home.step3.body', { command: '/embed' }) }}
-                </p>
-              </div>
-            </li>
-          </ol>
-          <a
-            class="mt-2.5 inline-flex min-h-11 items-center gap-1.5 text-[13px]/normal text-(--ui-accent) hover:underline hover:underline-offset-3 focus-visible:rounded-[3px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--ui-accent)"
-            href="https://www.notion.com/help/embed-and-connect-other-apps"
-            >{{ t('home.notionHelp') }} <span aria-hidden="true">↗</span></a
-          >
-        </div>
-      </section>
+      <WidgetUsage :url="widgetUrl" :disabled="widgetEmbed?.disabled.value" />
     </main>
-    <footer class="max-w-4xl pt-7 pb-9 text-xs/5 text-(--ui-muted) mx-auto">
-      <span class="font-brand font-bold">SILENT WIDGETS</span>
-      <span aria-hidden="true" class="mx-1.5">·</span>
-      {{ t('home.footer') }}
+    <footer
+      class="box-content mx-auto flex max-w-4xl flex-col items-center gap-2 px-4 pt-7 pb-9 text-center text-xs/5 text-(--ui-muted)"
+    >
+      <p>{{ t('footer.disclaimer') }}</p>
+      <p>
+        Made with ❤️ by
+        <a
+          href="https://silent.land"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-(--ui-accent) hover:underline hover:underline-offset-3 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-(--ui-accent)"
+          >SilentDepth</a
+        >
+      </p>
+      <a
+        href="https://github.com/SilentDepth/silent-widgets/issues"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-(--ui-accent) hover:underline hover:underline-offset-3 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-(--ui-accent)"
+        >{{ t('footer.feedback') }}</a
+      >
     </footer>
   </div>
 </template>

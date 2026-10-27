@@ -3,6 +3,7 @@ import type { PropType } from 'vue'
 import WidgetParamField from '@/components/widget-param-field.vue'
 import { usePageNavigation } from '@/composables/use-page-navigation'
 import { useSiteI18n } from '@/composables/use-site-i18n'
+import { useWidgetEmbed } from '@/composables/use-widget-embed'
 import type { WidgetValue } from '@/types/widget'
 import { parseWidgetParams, serializeParam, serializeWidgetParams } from '@/utils/widget-params'
 import { widgets } from '@/widgets/registry'
@@ -40,6 +41,10 @@ const finalUrl = computed(() => {
   url.search = serializeWidgetParams(definitions, values).toString()
   return url.href
 })
+useWidgetEmbed(
+  finalUrl,
+  computed(() => hasErrors.value || isNavigating.value),
+)
 const copyStatus = ref<'idle' | 'copied' | 'failed'>('idle')
 let mounted = false
 let statusTimer: ReturnType<typeof setTimeout> | undefined

@@ -18,7 +18,12 @@ useHead(() => ({
 </script>
 
 <template>
-  <component v-if="view.page.layout" :is="view.page.layout" :is-home="view.page.kind === 'index'">
+  <component
+    v-if="view.page.layout"
+    :is="view.page.layout"
+    :is-home="view.page.kind === 'index'"
+    :origin="view.page.origin"
+  >
     <component :is="view.page.component" :key="view.revision" v-bind="view.page.props" />
   </component>
   <component v-else :is="view.page.component" :key="view.revision" v-bind="view.page.props" />

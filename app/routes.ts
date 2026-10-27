@@ -16,6 +16,7 @@ export async function loadPage(url: URL, automatic: SupportedLang, siteLanguage 
   if (route.kind === 'index') {
     return {
       kind: route.kind,
+      origin: url.origin,
       layout,
       component: (await import('./pages/index/page.vue')).default,
       props: {},
@@ -47,6 +48,7 @@ export async function loadPage(url: URL, automatic: SupportedLang, siteLanguage 
       : `${name} · Silent Widgets`
   return {
     kind: route.kind,
+    origin: url.origin,
     layout,
     component,
     props: { ...prepared, origin: url.origin },
