@@ -3,16 +3,13 @@ import type { WidgetConfig } from '@/types/widget'
 const configs = import.meta.glob<WidgetConfig>('./*/config.ts', { eager: true })
 const components = import.meta.glob<{ default: VaporComponent }>('./*/widget.vue')
 
-export const widgets = [
-  'year-progress',
-  'mini-calendar',
-  'date-counter',
-  'daytime-meter',
-  'repo-stargazers',
-].map(id => ({
-  id,
-  ...configs[`./${id}/config.ts`],
-}))
+export const widgets = Object.keys(configs).map(path => {
+  const id = path.slice('./'.length, -'/config.ts'.length)
+  return {
+    id,
+    ...configs[`./${id}/config.ts`],
+  }
+})
 
 export function findWidget(id: string) {
   return widgets.find(widget => widget.id === id)

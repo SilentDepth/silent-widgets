@@ -1,10 +1,9 @@
-import { resolveLanguage } from '@/composables/use-i18n'
 import type { SupportedLang } from '@/composables/use-i18n'
+import { resolveLanguage } from '@/composables/use-i18n'
 import { defineText, localize } from '@/i18n/text'
 import { parseWidgetParams } from '@/utils/widget-params'
-import { resolveWidgetRoute } from '@/utils/widget-utils'
 import { loadWidgetI18n } from '@/widgets/i18n'
-import { loadWidget } from '@/widgets/registry'
+import { findWidget, loadWidget } from '@/widgets/registry'
 
 export type LoadedPage = NonNullable<Awaited<ReturnType<typeof loadPage>>>
 export interface PageView {
@@ -13,7 +12,7 @@ export interface PageView {
 }
 
 export async function loadPage(url: URL, automatic: SupportedLang, siteLanguage = automatic) {
-  const route = resolveWidgetRoute(url.pathname)
+  const route = resolveRouteType(url.pathname)
   if (!route) return null
   const layout = route.kind === 'widget' ? null : (await import('./layouts/site.vue')).default
   if (route.kind === 'index') {
@@ -72,4 +71,14 @@ export async function loadPage(url: URL, automatic: SupportedLang, siteLanguage 
       { property: 'og:image', content: new URL(widget.meta.cover, url.origin).href },
     ],
   }
+}
+
+export function resolveRouteType(pathname: string) {
+  const path = pathname === '/' ? '/' : pathname.replace(/\/$/, '')
+  if (path === '/') return { kind: 'index' as const }
+  const match = /^\/([^/]+)(\/config)?$/.exec(path)
+  if (!match) return null
+  const widget = findWidget(match[1])
+  if (!widget) return null
+  return { kind: match[2] ? ('config' as const) : ('widget' as const), widget }
 }

@@ -1,7 +1,6 @@
 import type { SupportedLang } from '@/composables/use-i18n'
 import type { PageNavigation } from '@/composables/use-page-navigation'
-import { resolveWidgetRoute } from '@/utils/widget-utils'
-import { loadPage } from './routes'
+import { loadPage, resolveRouteType } from './routes'
 import type { PageView } from './routes'
 
 const HISTORY_KEY = '__silentWidgets'
@@ -9,7 +8,7 @@ type Position = { left: number; top: number }
 type HistoryEntry = { id: string; scroll?: Position }
 
 function siteRoute(url: URL) {
-  const route = resolveWidgetRoute(url.pathname)
+  const route = resolveRouteType(url.pathname)
   return route?.kind === 'index'
     ? 'index'
     : route?.kind === 'config'
