@@ -2,14 +2,7 @@ import { defineText } from './text'
 
 export const siteMessages = {
   'site.language': defineText('界面语言', 'Site language'),
-  'home.tagline': defineText(
-    '给 Notion 页面添加日历、进度和计数。',
-    'Calendars, progress bars, and counters for your Notion pages.',
-  ),
-  'home.callout': defineText(
-    '选择小工具，调整参数，再把地址嵌入 Notion。',
-    'Choose a widget, make it yours, and embed the link in Notion.',
-  ),
+  'home.tagline': defineText('嵌入式页面小工具', 'Embeddable page widgets'),
   'home.widgets': defineText('小工具', 'Widgets'),
   'usage.title': defineText('如何使用', 'How to use'),
   'usage.description': defineText(

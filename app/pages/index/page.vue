@@ -7,12 +7,11 @@ const { l, t } = useSiteI18n()
 
 <template>
   <div class="max-w-4xl mx-auto">
-    <section aria-labelledby="page-title">
+    <section aria-labelledby="page-title" class="flex flex-col gap-2">
       <h1 id="page-title" class="home-title text-3xl sm:text-5xl font-brand font-bold">
         SILENT WIDGETS
       </h1>
-      <p class="text-base">{{ t('home.tagline') }}</p>
-      <p class="text-sm text-(--ui-muted)">{{ t('home.callout') }}</p>
+      <p class="text-xl">{{ t('home.tagline') }}</p>
     </section>
     <section class="mt-10 max-[600px]:mt-8" :aria-label="t('home.widgets')">
       <ul class="grid grid-template-widgets gap-4">

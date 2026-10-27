@@ -123,7 +123,7 @@ async function copyCode() {
             </div>
           </div>
           <a
-            class="mt-2 inline-flex min-h-11 items-center text-[13px]/5 text-(--ui-accent) hover:underline hover:underline-offset-3 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-(--ui-accent)"
+            class="mt-4 flex items-center text-xs text-trim text-(--ui-accent) hover:underline hover:underline-offset-3 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-(--ui-accent)"
             href="https://www.notion.com/help/embed-and-connect-other-apps"
             target="_blank"
             rel="noopener noreferrer"
@@ -208,7 +208,9 @@ async function copyCode() {
               :aria-label="t('usage.code.title')"
             ><code>{{ iframeCode }}</code></pre>
           </div>
-          <div class="mt-2 min-h-11 max-[600px]:hidden" aria-hidden="true" />
+          <div class="mt-4 text-xs text-trim max-[600px]:hidden" aria-hidden="true">
+            &ZeroWidthSpace;
+          </div>
         </section>
       </div>
     </div>
