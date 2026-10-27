@@ -98,7 +98,7 @@ async function copyUrl() {
   <div class="config-content @container mx-auto max-w-xl">
     <h1 class="sr-only">{{ t('config.title', { widget: l(widget.meta.name) }) }}</h1>
     <div
-      class="flex justify-between items-center gap-3 h-(--toolbar-height) bg-(--ui-canvas) sticky top-0 z-20"
+      class="sticky top-0 z-20 flex h-(--toolbar-height) items-center justify-between gap-3 bg-(--ui-canvas)"
     >
       <div class="relative min-w-0">
         <select
@@ -174,7 +174,7 @@ async function copyUrl() {
       {{ l(widget.meta.description) }}
     </p>
     <section
-      class="sticky top-(--toolbar-height) z-10 h-(--preview-height) overflow-hidden rounded-md bg-(--ui-canvas)"
+      class="sticky top-(--toolbar-height) z-10 h-(--preview-height) overflow-hidden rounded-md bg-(--ui-canvas) @max-[560px]:-mx-4 @max-[560px]:rounded-none"
       :aria-label="t('config.preview')"
     >
       <div class="@container-size absolute inset-0">
@@ -182,7 +182,7 @@ async function copyUrl() {
       </div>
     </section>
     <form
-      class="mt-4 divide-y divide-(--ui-line) overflow-clip rounded-md border border-(--ui-line)"
+      class="mt-4 grid grid-cols-[minmax(0,1.2fr)_repeat(2,minmax(0,1fr))] gap-x-3 rounded-md border border-(--ui-line) px-3.5 @max-[560px]:-mx-4 @max-[560px]:grid-cols-2 @max-[560px]:rounded-none @max-[560px]:border-x-0 @max-[560px]:px-4"
       :aria-label="t('config.parameters')"
       :inert="isNavigating"
       @submit.prevent="copyUrl"
