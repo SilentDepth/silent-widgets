@@ -23,7 +23,6 @@ export async function prepareWidget(url: URL, automatic: SupportedLang, siteLang
     raw.date = `${new Date().getFullYear() + 1}-01-01`
   }
   const parsed = parseWidgetParams(widget.params, raw)
-  if (route.kind === 'config' && !url.searchParams.has('lang')) parsed.values.lang = siteLanguage
   const language =
     parsed.values.lang === 'auto'
       ? route.kind === 'config'

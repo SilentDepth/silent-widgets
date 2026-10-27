@@ -15,7 +15,7 @@ const props = defineProps({
   raw: { type: Object as PropType<Record<string, string>>, required: true },
   origin: { type: String, required: true },
 })
-const { lang, l, t } = useSiteI18n()
+const { l, t } = useSiteI18n()
 const definitions = props.widget.params
 const { navigate, replaceUrl, isNavigating } = usePageNavigation()
 const initial = parseWidgetParams(definitions, props.raw)
@@ -29,13 +29,7 @@ const draft = reactive(
     ]),
   ),
 )
-const followsSiteLanguage = ref(props.raw.lang === undefined)
-if (followsSiteLanguage.value) draft.lang = lang.value
-watch(lang, value => {
-  if (followsSiteLanguage.value) draft.lang = value
-})
 function updateParam(name: string, value: string) {
-  if (name === 'lang') followsSiteLanguage.value = false
   draft[name] = value
 }
 const values = reactive({ ...props.values })
@@ -61,8 +55,6 @@ watch(
     if (mounted && !hasErrors.value) {
       const url = new URL(finalUrl.value)
       url.pathname += '/config'
-      // Preserve an explicit auto choice when reopening the configurator.
-      url.searchParams.set('lang', String(values.lang))
       replaceUrl(url)
     }
   },
