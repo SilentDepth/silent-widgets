@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { splitColors } from '@/utils/widget-params'
 import { commonParams, primaryParam, secondaryParam } from '@/widgets/common-params'
 

@@ -14,52 +14,36 @@
 
 This project should be runnable on Cloudflare Workers. Avoid using Node.js API if it is not compatible to Cloudflare Workers.
 
-<!--NITRO START-->
+<!--NUXT START-->
 
-This project is based on [Nitro](https://nitro.build) v3, [h3](https://h3.dev/), [Vite](https://vite.dev/) and [rolldown](https://rolldown.rs/).
+## Nuxt 4 conventions
 
-## Project Structure
+This project uses Nuxt 4 for the site app, standalone Vue Vapor widget pages, and the built-in Nitro server builder.
 
-`app/` is the frontend (SPA/SSR) with `app/entry-*.ts` as entries. `server/` contains server-side code with subdirs: `api/` (/api prefixed handlers), `routes/` (non-prefixed route handlers), `middleware/`, `plugins/`, `utils/`, `assets/`, and `tasks/`. `public/` holds static assets (copied, not bundled). Config files: `vite.config.ts` (loads nitro/vite plugin), `nitro.config.ts` (serverDir, routeRules, preset, etc.), `tsconfig.json` (extends nitro/tsconfig, `~/*` path alias).
+- Put pages in `app/pages/`, layouts in `app/layouts/`, and components in `app/components/`.
+- Use Nuxt file routing, `NuxtLink`, `navigateTo`, `useRoute`, and `useRouter` for navigation.
+- Use `useHead` and `useSeoMeta` for Nuxt page metadata.
+- Keep independent `/:widget` pages outside Nuxt routing. `modules/widgets.ts` registers their Nitro handlers and separate Vite builds; `widgets/` contains their thin SSR and pure Vapor client entry.
+- Links from the Nuxt app to independent widget URLs must perform document navigation, for example with `external` on `NuxtLink`.
+- Reuse `app/widgets/` in both entries. Shared widget code uses explicit Vue/package imports and the local Vapor `ClientOnly` for browser-local dates; do not import Nuxt, Vue Router, or Unhead there.
+- Keep `app/app.vue` on the virtual DOM. Enable Vapor components with `vue.vapor` in `nuxt.config.ts`.
+- Use Nuxt auto-imports in the site app. Shared widget dependencies must also work in the standalone build without auto-imports.
+- Share the site language with `useState`; use the Cookie for persistence so language selection also works when Cookie writes are blocked.
+- Put API handlers in `server/api/`. Import `defineEventHandler` from `nuxt/server` for portable request events.
+- Portable handlers use `event.req` as a standard `Request` and `event.res` for response status and headers.
+- Use `useRuntimeConfig()` for the private `NUXT_GITHUB_API_TOKEN`. The GitHub proxy also accepts the existing `GITHUB_API_TOKEN`.
+- Configure Nuxt, Vite plugins, and the Cloudflare preset in `nuxt.config.ts`.
+- Keep `vite.config.ts` for Vite+ formatting, linting, and tests. Nuxt owns the site application build; the local widget module integrates standalone builds into the same commands and deployment.
+- Run `vp run dev`, `vp run build`, `vp run preview`, and `vp run typecheck` for the Nuxt scripts.
+- Run `vp check` and `vp test` for project checks. `vp run typecheck` checks both Nuxt and `widgets/tsconfig.json`. Benchmark scripts and recorded results are in `benchmarks/nuxt-migration/`, with the current split-entry results under `standalone/`.
 
-## Conventions
-
-- Path alias `@/*` (tsconfig)
-- Route handlers use `defineHandler()` from `nitro`
-- Route file patterns: `[param]` for dynamic, `[...slug]` for catch-all, `.get.ts`/`.post.ts` for method-specific, `(group)/` ignored in path
-
-## Nitro Quick Reference
-
-> Use `npx nitro docs` and `npx nitro docs --page` to read the nitro docs.
-
-**`nitro`** — `defineConfig`, `defineHandler`, `defineMiddleware`, `defineWebSocketHandler`, `definePlugin` (hooks: `request`, `response`, `error`, `close`), `defineRouteMeta`, `defineErrorHandler`, `html`, `HTTPError`, `HTTPResponse`, `fetch`, `serverFetch`
-**`nitro/h3`** — All h3 utilities (re-exported)
-**`nitro/app`** — `useNitroApp()`, `useNitroHooks()`, `getRouteRules()`, `serverFetch()`, `fetch()`
-**`nitro/cache`** — `defineCachedHandler(handler, opts)`, `defineCachedFunction(fn, opts)` (GET/HEAD only)
-**`nitro/context`** — `useRequest()` (experimental, requires async context)
-**`nitro/runtime-config`** — `useRuntimeConfig()`
-**`nitro/storage`** — `useStorage(namespace?)` — KV (`getItem`, `setItem`, `removeItem`, `getKeys`)
-**`nitro/database`** — `useDatabase()` — SQL via `` db.sql`SELECT ...` `` (requires `experimental: { database: true }`)
-**`nitro/task`** — `defineTask({ meta, run })`, `runTask(name, { payload })` (requires `experimental: { tasks: true }`)
-**`nitro/vite`** — `nitro()` Vite plugin (used in `vite.config.ts`)
-**`nitro/vite/runtime`** — `fetchViteEnv()`
-**`nitro/types`** — TypeScript type definitions
-
-**Request Lifecycle:** Plugins `request` hook → Static assets → Route rules → Global middleware → Route-scoped middleware → Route handler → Server entry fallback → Renderer (SPA/SSR) → Plugins `response` hook
-
-**Config (`nitro.config.ts`):** `routeRules` (per-route headers, redirects, proxy, cache, basicAuth), `$development` / `$production` (env-specific), `storage` + `devStorage` (KV drivers), `prerender: { routes, crawlLinks }`, `traceDeps` (externalize bundler-incompatible deps)
-
-**`import.meta.*` flags:** `dev`, `preset`, `prerender`, `nitro`, `server`, `client`, `baseURL`
-
-**Nitro v3 / H3 v2 migration:** `nitropack/runtime/*` → `nitro/*` (e.g. `nitro/storage`, `nitro/task`, `nitro/types`); all h3 imports from `nitro/h3`; `eventHandler()`/`defineEventHandler()` → `defineHandler()`; `createError()`/`H3Error` → `HTTPError`; `event.path` → `event.url.pathname`; `event.web` → `event.req` (native `Request`); body via `event.req.json()`/`.text()`/`.formData()`; headers via `event.req.headers.get()`/`event.res.headers.set()`; status via `event.res.status`; always `return` values (`return redirect(loc, code)`); `sendError()` → `throw HTTPError`; `sendNoContent()` → `return noContent()`; `useAppConfig()` removed.
-
-<!--NITRO END-->
+<!--NUXT END-->
 
 <!--VITE PLUS START-->
 
 # Using Vite+, the Unified Toolchain for the Web
 
-This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, and it invokes Vite through `vp dev` and `vp build`. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
+This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, and Nuxt invokes Vite for this project; run the Nuxt scripts with `vp run dev` and `vp run build`. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
 
 Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.dev/guide/.
 

@@ -1,5 +1,6 @@
 @import 'tailwindcss' source(none);
 @source '../../**/*.vue';
+@source '../../../widgets/**/*.vue';
 
 @theme {
   --font-brand: Doto, ui-monospace, monospace;

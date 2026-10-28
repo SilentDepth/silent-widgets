@@ -1,9 +1,11 @@
 <script setup vapor lang="ts">
 import '../widget.css'
-import ClientOnly from '@/components/client-only.vue'
+import { useIntervalFn } from '@vueuse/core'
+import { computed, onMounted, ref } from 'vue'
 import useI18n from '@/composables/use-i18n'
 import useWidgetStyle from '@/composables/use-widget-style'
 import { widgetProps } from '@/utils/widget-params'
+import ClientOnly from '../client-only.vue'
 import { params } from './config'
 
 const ERR_NO_DATE = Symbol()

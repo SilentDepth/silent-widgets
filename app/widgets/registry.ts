@@ -1,3 +1,4 @@
+import type { VaporComponent } from 'vue'
 import type { WidgetConfig } from '@/types/widget'
 
 const configs = import.meta.glob<WidgetConfig>('./*/config.ts', { eager: true })
@@ -7,7 +8,7 @@ export const widgets = Object.keys(configs).map(path => {
   const id = path.slice('./'.length, -'/config.ts'.length)
   return {
     id,
-    ...configs[`./${id}/config.ts`],
+    ...configs[path]!,
   }
 })
 

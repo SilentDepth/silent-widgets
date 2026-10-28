@@ -1,7 +1,9 @@
+import { computed, inject, onScopeDispose, shallowRef, toValue, watch } from 'vue'
+import type { InjectionKey, MaybeRef } from 'vue'
 import { getWidgetI18n, loadWidgetI18n } from '@/widgets/i18n'
 
 export const SupportedLang = { enUS: 'en-US', zhCN: 'zh-CN' } as const
-export type SupportedLang = ValueOf<typeof SupportedLang>
+export type SupportedLang = (typeof SupportedLang)[keyof typeof SupportedLang]
 const DEFAULT_LANG = SupportedLang.enUS
 export const autoLanguageKey: InjectionKey<MaybeRef<SupportedLang>> = Symbol('auto-language')
 

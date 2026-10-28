@@ -16,7 +16,11 @@ const props = defineProps<{
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 const { l, t } = useSiteI18n()
 const colors = computed(() => splitColors(props.modelValue))
-const hasExtraColors = computed(() => colors.value.length > (props.definition.darkVariant ? 2 : 1))
+const hasExtraColors = computed(
+  () =>
+    colors.value.length >
+    (props.definition.type === 'color' && props.definition.darkVariant ? 2 : 1),
+)
 const hasDark = computed(() => colors.value.length > 1)
 const savedDark = ref<string>()
 const id = computed(() => `param-${props.name}`)

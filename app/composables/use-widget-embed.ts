@@ -1,3 +1,5 @@
+import type { InjectionKey } from 'vue'
+
 export interface WidgetEmbed {
   url: ComputedRef<string>
   disabled: ComputedRef<boolean>

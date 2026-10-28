@@ -1,5 +1,4 @@
 <script setup vapor lang="ts">
-import { useHead } from '@unhead/vue'
 import WidgetUsage from '@/components/widget-usage.vue'
 import { autoLanguageKey } from '@/composables/use-i18n'
 import { useSiteI18n } from '@/composables/use-site-i18n'
@@ -8,7 +7,10 @@ import { widgetEmbedKey } from '@/composables/use-widget-embed'
 import type { WidgetEmbed } from '@/composables/use-widget-embed'
 import { LANGUAGE_OPTIONS } from '@/i18n/languages'
 
-const props = defineProps<{ isHome: boolean; origin: string }>()
+const route = useRoute()
+const origin = useRequestURL().origin
+const isHome = computed(() => route.path === '/')
+const { isLoading } = useLoadingIndicator({ throttle: 0 })
 const { lang, t } = useSiteI18n()
 const { setLanguage } = useSiteLanguage()
 provide(autoLanguageKey, lang)
@@ -16,7 +18,7 @@ const widgetEmbed = shallowRef<WidgetEmbed>()
 provide(widgetEmbedKey, widgetEmbed)
 const widgetUrl = computed(() => {
   if (widgetEmbed.value) return widgetEmbed.value.url.value
-  const url = new URL('/year-progress', props.origin)
+  const url = new URL('/year-progress', origin)
   url.searchParams.set('lang', lang.value)
   return url.href
 })
@@ -35,17 +37,17 @@ useHead({
 </script>
 
 <template>
-  <div>
+  <div :aria-busy="isLoading || undefined">
     <header class="box-content max-w-4xl px-4 flex items-center justify-between gap-4 mx-auto">
       <span class="flex text-xl text-trim font-brand font-bold whitespace-nowrap overflow-hidden">
         <span class="py-4">&ZeroWidthSpace;</span>
-        <a
+        <NuxtLink
           v-show="!isHome"
-          href="/"
+          to="/"
           class="layout-title py-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--ui-accent)"
         >
           SILENT WIDGETS
-        </a>
+        </NuxtLink>
       </span>
       <div
         class="relative ml-auto grid size-9 shrink-0 place-items-center rounded-[5px] text-(--ui-muted) hover:bg-(--ui-surface) focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--ui-accent)"

@@ -1,7 +1,6 @@
 <script setup vapor lang="ts">
-import type { PropType } from 'vue'
+import type { PropType, VaporComponent } from 'vue'
 import WidgetParamField from '@/components/widget-param-field.vue'
-import { usePageNavigation } from '@/composables/use-page-navigation'
 import { useSiteI18n } from '@/composables/use-site-i18n'
 import { useWidgetEmbed } from '@/composables/use-widget-embed'
 import type { LocalizedText } from '@/i18n/text'
@@ -20,7 +19,17 @@ const props = defineProps({
 })
 const { l, t } = useSiteI18n()
 const definitions = props.widget.params
-const { navigate, replaceUrl, isNavigating } = usePageNavigation()
+const route = useRoute()
+const router = useRouter()
+const pagePath = route.path
+const targetPath = shallowRef(pagePath)
+onScopeDispose(
+  router.beforeEach(to => {
+    targetPath.value = to.path
+  }),
+)
+const { isLoading } = useLoadingIndicator({ throttle: 0 })
+const isNavigating = computed(() => isLoading.value && targetPath.value !== pagePath)
 const draft = reactive(
   Object.fromEntries(
     Object.entries(definitions).map(([name, definition]) => [
@@ -30,6 +39,21 @@ const draft = reactive(
   ),
 )
 const values = reactive({ ...props.values })
+watch(
+  () => props.raw,
+  () => {
+    if (
+      Object.keys(props.errors).length === 0 &&
+      Object.keys(definitions).every(name => props.values[name] === values[name])
+    )
+      return
+    for (const [name, definition] of Object.entries(definitions)) {
+      draft[name] = props.errors[name]
+        ? (props.raw[name] ?? '')
+        : serializeParam(definition, props.values[name])
+    }
+  },
+)
 const parsed = computed(() => parseWidgetParams(definitions, draft))
 const hasErrors = computed(() => Object.keys(parsed.value.errors).length > 0)
 const finalUrl = computed(() => {
@@ -55,8 +79,11 @@ watch(
     copyStatus.value = 'idle'
     if (mounted && !hasErrors.value) {
       const url = new URL(finalUrl.value)
-      url.pathname += '/config'
-      replaceUrl(url)
+      void router.replace({
+        path: route.path,
+        query: Object.fromEntries(url.searchParams),
+        hash: route.hash,
+      })
     }
   },
   { immediate: true },
@@ -96,7 +123,7 @@ async function copyUrl() {
           :aria-label="t('config.select')"
           :value="widget.id"
           :disabled="isNavigating"
-          @change="navigate(`/${($event.target as HTMLSelectElement).value}/config`)"
+          @change="router.push(`/${($event.target as HTMLSelectElement).value}/config`)"
         >
           <option
             v-for="item of widgets"

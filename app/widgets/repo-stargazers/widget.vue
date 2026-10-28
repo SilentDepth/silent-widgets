@@ -1,5 +1,7 @@
 <script setup vapor lang="ts">
 import '../widget.css'
+import { isMatching, P } from 'ts-pattern'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import useI18n from '@/composables/use-i18n'
 import useWidgetStyle from '@/composables/use-widget-style'
 import { widgetProps } from '@/utils/widget-params'

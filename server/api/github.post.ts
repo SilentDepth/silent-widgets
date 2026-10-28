@@ -1,9 +1,10 @@
-import { defineHandler } from 'nitro'
+import process from 'node:process'
+import { defineEventHandler, useRuntimeConfig } from 'nuxt/server'
 
 const GITHUB_GRAPHQL_ENDPOINT = 'https://api.github.com/graphql'
 
-export default defineHandler(async event => {
-  const token = process.env.GITHUB_API_TOKEN
+export default defineEventHandler(async event => {
+  const token = useRuntimeConfig().githubApiToken || process.env.GITHUB_API_TOKEN
 
   if (!token) {
     event.res.status = 500

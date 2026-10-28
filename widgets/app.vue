@@ -1,12 +1,11 @@
 <script setup vapor lang="ts">
-import type { PropType } from 'vue'
+import type { VaporComponent } from 'vue'
 import type { WidgetValue } from '@/types/widget'
 
-defineProps({
-  component: { type: Object as PropType<VaporComponent>, required: true },
-  values: { type: Object as PropType<Record<string, WidgetValue>>, required: true },
-})
-defineOptions({ inheritAttrs: false })
+defineProps<{
+  component: VaporComponent
+  values: Record<string, WidgetValue>
+}>()
 </script>
 
 <template>

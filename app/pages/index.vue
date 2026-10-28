@@ -3,6 +3,8 @@ import { useSiteI18n } from '@/composables/use-site-i18n'
 import { widgets } from '@/widgets/registry'
 
 const { l, t } = useSiteI18n()
+definePageMeta({ layout: 'site' })
+useHead({ title: 'Silent Widgets' })
 </script>
 
 <template>
@@ -16,8 +18,8 @@ const { l, t } = useSiteI18n()
     <section class="mt-10 max-[600px]:mt-8" :aria-label="t('home.widgets')">
       <ul class="grid grid-template-widgets gap-4">
         <li v-for="(widget, index) of widgets" :key="widget.id">
-          <a
-            :href="`/${widget.id}/config`"
+          <NuxtLink
+            :to="`/${widget.id}/config`"
             class="flex flex-col gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--ui-accent) group"
           >
             <img
@@ -32,7 +34,7 @@ const { l, t } = useSiteI18n()
               {{ l(widget.meta.name) }}
             </h2>
             <p class="text-sm text-trim text-(--ui-muted)">{{ l(widget.meta.description) }}</p>
-          </a>
+          </NuxtLink>
         </li>
       </ul>
     </section>

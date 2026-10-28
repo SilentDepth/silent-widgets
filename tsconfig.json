@@ -1,18 +1,10 @@
 {
-  "extends": ["nitro/tsconfig"],
-  "include": ["**/*", "**/*.vue"],
-  "compilerOptions": {
-    "allowImportingTsExtensions": false,
-
-    "types": ["vite/client"],
-    "paths": {
-      "@/*": ["./app/*"]
-    },
-
-    "plugins": [
-      {
-        "name": "@dxup/unimport}"
-      }
-    ]
-  }
+  "files": [],
+  "references": [
+    { "path": "./.nuxt/tsconfig.app.json" },
+    { "path": "./.nuxt/tsconfig.server.json" },
+    { "path": "./.nuxt/tsconfig.shared.json" },
+    { "path": "./.nuxt/tsconfig.node.json" },
+    { "path": "./widgets/tsconfig.json" }
+  ]
 }

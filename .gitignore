@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 .output
+.nuxt
+.data
+*.tsbuildinfo
 *.local
 
 # Editor directories and files
